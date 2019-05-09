@@ -11,6 +11,7 @@
     "@babel/plugin-proposal-class-properties": "^7.2.3",
     "@babel/preset-react": "^7.0.0",
     "axios": "^0.18.0",
+    "babel-polyfill": "^6.26.0",
     "react": "^16.7.0",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.7.0",
@@ -18,7 +19,9 @@
     "react-hot-loader": "^4.6.3",
     "react-redux": "^7.0.3",
     "react-router-dom": "^4.3.1",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "redux-form": "^8.2.0",
+    "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-rc.1",

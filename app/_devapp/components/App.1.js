@@ -1,8 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { render } from 'react-dom';
 import { asyncComponent } from 'react-async-component';
-import ContactForm from './components/ContactForm';
+import ContactForm from './ContactForm';
+import NewHome from './NewHome';
 import axios from 'axios';
+import { connect } from 'react-redux';
+import { fetchHomes } from '../actions';
 
 /** We are importing our index.php my app Vairaible */
 import myApp from 'myApp';
@@ -32,23 +34,28 @@ __webpack_public_path__ = `${window.STATIC_URL}/app/assets/bundle/`;
 } */
 
 class Myapp extends Component {
-    state = {
-        contacts: []
-    }
+/*     state = {
+        contacts: [],
+        homes: []
+    } */
 
     componentDidMount() {
+        this.props.fetchHomes();
+
+
         //const url = '/api/contacts.php';
-        axios.get('./../api/contacts.php')
+        /* axios.get('./../api/contacts.php')
         .then(response => response.data)
         .then((data) => {
             this.setState({ contacts: data });
-        });
+        }); */
     }
 
     render() {
+        console.log('this.props', this.props);
         return (
             <React.Fragment>
-                <h1>Homes</h1>
+                {/* <h1>Homes</h1>
                 <table border='1' width='100%' >
                 <tr>
                     <th>Name</th>
@@ -67,10 +74,46 @@ class Myapp extends Component {
                 </tr>
                 ))}
                 </table>
-                <ContactForm />
+                <ContactForm /> */}
+
+
+                <div>
+                    <div className="ui menu">
+                        <div className="header item">
+                            M*System
+                        </div>
+                        <div className="item active">
+                            Homes
+                        </div>
+                    </div>
+
+                    <select className="ui search dropdown">
+                        {this.props.homes.map((home) => (
+                            <option value = "home.id">{ home.home_name }</option>                      
+                        ))}
+                    </select>
+
+                    <div className="ui container centered grid">
+                        <div className="ui row">
+                            <div className="column">
+                                HOMES
+                                <NewHome /> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </React.Fragment>
         );
     }
 }
 
-render(<Myapp/>, document.getElementById('app'));
+const mapStateToProps = state => {
+    return { homes: state.homes };
+  };
+
+//export default Myapp;
+
+export default connect(
+    mapStateToProps,
+    {fetchHomes: fetchHomes}
+  )(Myapp);

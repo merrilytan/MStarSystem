@@ -7,17 +7,19 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 let config = {
   	entry: {
     	main: [
-			'./_devapp/app.js',
-			'./_devapp/css/app.scss'
+			'babel-polyfill',
+			'./_devapp/index.js',
+			'./_devapp/css/style.scss'
     	]
   	},
   	output: {
 		path: path.resolve(__dirname, 'assets', 'bundle'),
 		filename: '[name].bundle.js'
-	},
-	resolve: {
-        extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
-    },
+		},
+		resolve: {
+					extensions: ['.js', '.jsx', '.json', '.ts', '.tsx']
+		},
+		devtool: 'source-map',
   	module: {
 		rules: [
 			{
@@ -73,7 +75,7 @@ let config = {
 		myApp: 'myApp',
 	},
   	plugins: [
-		new ExtractTextPlugin(path.join('..', 'css', 'app.css')),
+		new ExtractTextPlugin(path.join('..', 'css', 'style.css')),
 		new webpack.DefinePlugin({
 			'__DEV__' : JSON.stringify(true),
 			'__API_HOST__' : JSON.stringify('http://localhost/my-app/'),

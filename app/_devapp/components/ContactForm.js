@@ -20,7 +20,7 @@ class ContactForm extends React.Component {
         formData.append('city', this.state.city)
         formData.append('country', this.state.country)
         formData.append('job', this.state.job)
-
+        console.log('formData2', formData);
         axios({
             method: 'post',
             url: './../../api/contacts.php',
