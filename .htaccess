@@ -1,0 +1,17 @@
+Options -MultiViews
+
+
+
+<IfModule mod_rewrite.c>
+
+    RewriteEngine On
+
+    RewriteBase /homes
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    RewriteRule . /client/assets/index.html [L,NC,QSA]
+
+</IfModule>

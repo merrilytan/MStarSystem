@@ -8,8 +8,8 @@ let config = {
   	entry: {
     	main: [
 			'babel-polyfill',
-			'./_devapp/index.js',
-			'./_devapp/css/style.scss'
+			'./src/index.js',
+			'./src/css/style.scss'
     	]
   	},
   	output: {

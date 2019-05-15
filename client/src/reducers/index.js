@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { reducer as formReducer } from 'redux-form';
 //Redux form creates reducers for us!
+import homeReducer from './homeReducer.js';
 
 /* const songsReducer = () => {
   return [
@@ -11,18 +12,18 @@ import { reducer as formReducer } from 'redux-form';
   ];
 };*/
 
-const homesReducer = (state = [], action) => {
-    switch (action.type) {
-        case 'FETCH_HOMES':
-            return action.payload;
-/*         case 'CREATE_HOME':
-            return null; */
-        default: 
-            return state;
-    }
-};
+// const homesReducer = (state = [], action) => {
+//     switch (action.type) {
+//         case 'FETCH_HOMES':
+//             return action.payload;
+// /*         case 'CREATE_HOME':
+//             return null; */
+//         default: 
+//             return state;
+//     }
+// };
 
 export default combineReducers({
   form: formReducer, //hooking up redux form
-  homes: homesReducer
+  homes: homeReducer
 });

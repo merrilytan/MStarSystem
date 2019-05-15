@@ -55,7 +55,11 @@ if ($method == 'GET') {
     }
     echo ']';
   } elseif ($method == 'POST') {
-    echo json_encode($result);
+    $last_insert_id = $con->insert_id;
+    $sql = "select * from homes where id=" . $last_insert_id;
+    $newresult = mysqli_query($con,$sql);
+    
+    echo json_encode(mysqli_fetch_object($newresult));
   } else {
     echo mysqli_affected_rows($con);
   }

@@ -1,11 +1,11 @@
 import homes from '../apis/homes';
-import axios from 'axios';
+import { CREATE_HOME, FETCH_HOMES } from './types';
 
 export const fetchHomes = () => {
     return async (dispatch, getState) => {
         const response = await homes.get();
         console.log('response.data', response.data);
-        dispatch({ type: 'FETCH_HOMES', payload: response.data });
+        dispatch({ type: FETCH_HOMES, payload: response.data });
     };
 };  
 
@@ -18,7 +18,7 @@ export const createHome = (formValues) => {
         formData.append('primary_first_name', formValues.primaryFirstName);
         formData.append('primary_last_name', formValues.primaryLastName);
 
-        const response = await axios({
+        await homes({
             method: 'post',
             url: './../../api/homes.php',
             data: formData,
@@ -26,11 +26,12 @@ export const createHome = (formValues) => {
         })
         .then(function (response) {
             //handle success
-            console.log(response);
+            console.log('response!', response);
+            dispatch({ type: CREATE_HOME, payload: response.data });
         })
-        .catch(function (response) {
+        .catch(function (error) {
             //handle error
-            console.log(response);
+            console.log(error);
         });
     
         //dispatch({ type: 'CREATE_HOME'});
