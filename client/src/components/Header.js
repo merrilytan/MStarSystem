@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
     return (
-        <div className="ui secondary pointing menu">
+        <div className="ui teal top menu inverted">
             <Link to="/" className="item">
                 M*System
             </Link>

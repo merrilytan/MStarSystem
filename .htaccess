@@ -6,12 +6,14 @@ Options -MultiViews
 
     RewriteEngine On
 
-    RewriteBase /homes
+    RewriteBase /
 
     RewriteCond %{REQUEST_FILENAME} !-f
 
     RewriteCond %{REQUEST_FILENAME} !-d
 
-    RewriteRule . /client/assets/index.html [L,NC,QSA]
+    RewriteRule ^homes /client/assets/index.html [L,NC,QSA]
+
+    RewriteRule ^homeData /api/homes.php [L,NC,QSA]
 
 </IfModule>

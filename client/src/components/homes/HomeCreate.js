@@ -40,9 +40,9 @@ class HomeCreate extends React.Component {
                 <div className = "column">
                     {/* handleSubmit is from redux form. it automatically adds event.preventDefault */}
                     <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className ="ui form error">
-                        <Field name = "homeName" component={this.renderInput} label="Home Name" placeholder="Home Name" />
-                        <Field name = "primaryFirstName" component={this.renderInput} label="First Name" placeholder="First Name" />
-                        <Field name = "primaryLastName" component={this.renderInput} label="Last Name" placeholder="Last Name" />
+                        <Field name = "home_name" component={this.renderInput} label="Home Name" placeholder="Home Name" />
+                        <Field name = "primary_first_name" component={this.renderInput} label="First Name" placeholder="First Name" />
+                        <Field name = "primary_last_name" component={this.renderInput} label="Last Name" placeholder="Last Name" />
                         <button className="ui button">Submit</button>
                     </form>
                 </div>
@@ -55,16 +55,16 @@ class HomeCreate extends React.Component {
 const validate = (formValues) => {
     const errors = {};
     
-    if(!formValues.homeName) {
-        errors.homeName = 'You must enter a home name';
+    if(!formValues.home_name) {
+        errors.home_name = 'You must enter a home name';
     }
 
-    if(!formValues.primaryFirstName) {
-        errors.primaryFirstName = 'You must enter the primary\'s first name';
+    if(!formValues.primary_first_name) {
+        errors.primary_first_name = 'You must enter the primary\'s first name';
     }
 
-    if(!formValues.primaryLastName) {
-        errors.primaryLastName = 'You must enter the primary\'s last name';
+    if(!formValues.primary_last_name) {
+        errors.primary_last_name = 'You must enter the primary\'s last name';
     }
 
     return errors;
@@ -73,6 +73,7 @@ const validate = (formValues) => {
 //Bc need to connect 'connect' and 'reduxForm', need new syntax
 const formWrapped = reduxForm({ 
     form: 'homeCreate', 
+    touchOnBlur : false, 
     validate: validate
 })(HomeCreate);
 
