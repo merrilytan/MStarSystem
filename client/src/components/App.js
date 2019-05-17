@@ -15,7 +15,7 @@ const App = () => {
                     <Header />
                     <Route path="/" exact component={HomeList} />
                     <Route path="/homes/new" exact component={HomeCreate} />
-                    <Route path="/homes/edit" exact component={HomeEdit} />
+                    <Route path="/homes/edit/:id" component={HomeEdit} />
                     <Route path="/delete" exact component={HomeDelete} />
                     <Route path="/homes/show" exact component={HomeShow} />
                 </div>

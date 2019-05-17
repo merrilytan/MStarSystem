@@ -1,9 +1,8 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
-import { Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom'
 import { connect } from 'react-redux';
 import { fetchHomes } from '../../actions';
-import HomeEdit from './HomeEdit';
 
 class HomeList extends React.Component {
     state = {};
@@ -28,7 +27,7 @@ class HomeList extends React.Component {
         return (
             <div className={className}>
                 <label>{label}</label>
-                <select {...input}>
+                <select {...input} onChange={this.onChange} value={this.state.select} class="ui fluid search selection dropdown">
                     <option value = "">Choose Home</option>
                     {this.props.homes.map((home) => (
                         <option value = {home.id}>{ home.home_name }</option>                      
@@ -39,32 +38,24 @@ class HomeList extends React.Component {
         );
     };
 
-    onSubmit = formValues => {
-        // this.props.onSubmit(formValues);  //onSubmit is prop we passed into component
-        console.log('formValues', formValues);
-        //this.props.editHome(formValues);
-        this.setState({home: formValues.homeSelected});
+    onChange = (event) => {
+        this.setState({select: event.target.value});
     }
 
     render() {
-        if(this.state.home) {
-            return(
-                <HomeEdit selectedHome={this.state.home} />
-            )
-        }
-        else {
-            return (
+        return (
+            <div>
+                <div class="ui hidden divider"></div>
                 <div className = "ui two column centered grid">
                     <div className = "column">
-                        {/* handleSubmit is from redux form. it automatically adds event.preventDefault */}
-                        <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className ="ui form error">   
+                        <form className ="ui form error">
                             <Field name="homeSelected" component={this.renderSelect} label="Open Homes" />
-                            <button className="ui button">Edit Home</button>
+                            <div className="field"><Link to= {`/homes/edit/${this.state.select}`} className="ui button">Edit Home</Link></div>
                         </form>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        );
     }
 }
 

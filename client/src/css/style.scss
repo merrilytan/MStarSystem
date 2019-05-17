@@ -1,0 +1,37 @@
+body {
+   background-color: #eee !important;
+}
+
+.home.icon {
+   color: rgba(0,0,0,.4) !important;
+}
+
+.ui.menu .active.item {
+   background-color: rgba(0,0,0,.4) !important;
+   color: #fff !important;
+}
+
+.top.menu {
+   border-radius: 0 !important;
+}
+
+.ui.menu {
+   border: none !important;
+}
+
+.font--teal {
+   color: #00b5ad !important;
+}
+
+.font--black {
+   color: #000 !important;
+}
+
+hr {
+   color: #00b5ad !important;
+   size: 3;
+}
+
+.ui.form .field>label {
+   color: rgba(0,0,0,.4) !important;
+}

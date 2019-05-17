@@ -1,5 +1,5 @@
 import homes from '../apis/homes';
-import { CREATE_HOME, FETCH_HOMES, FETCH_HOME } from './types';
+import { CREATE_HOME, FETCH_HOMES, FETCH_HOME, EDIT_HOME } from './types';
 
 export const fetchHomes = () => {
     return async (dispatch, getState) => {
@@ -9,6 +9,13 @@ export const fetchHomes = () => {
     };
 };  
 
+export const fetchHome = (selectedHome) => {
+    return async (dispatch, getState) => {
+        const response = await homes.get(`/homeData/${selectedHome}`);
+        dispatch({ type: FETCH_HOME, payload: response.data });
+    }
+};  
+
 export const createHome = (formValues) => {
     return async (dispatch, getState) => {
 
@@ -16,35 +23,22 @@ export const createHome = (formValues) => {
         formData.append('home_name', formValues.home_name);
         formData.append('primary_first_name', formValues.primary_first_name);
         formData.append('primary_last_name', formValues.primary_last_name);
-
         const response = await homes.post('/homeData', formData);
 
         dispatch({ type: CREATE_HOME, payload: response.data });
-        // await homes({
-        //     method: 'post',
-        //     url: './../../api/homes.php',
-        //     data: formData,
-        //     config: { headers: {'Content-Type': 'multipart/form-data' }}
-        // })
-        // .then(function (response) {
-        //     //handle success
-        //     console.log('response!', response);
-        //     dispatch({ type: CREATE_HOME, payload: response.data });
-        // })
-        // .catch(function (error) {
-        //     //handle error
-        //     console.log(error);
-        // });
-    
-        //dispatch({ type: 'CREATE_HOME'});
     };
 };
 
-export const editHome = (selectedHome) => {
+export const editHome = (selectedHome, formValues) => {
     return async (dispatch, getState) => {
-        const response = await homes.get(`/homeData/${selectedHome}`);
-        console.log('response11111', response);
-        dispatch({ type: FETCH_HOME, payload: response.data });
-    }
-};   
+        const entries = Object.entries(formValues);
+        let formData = new FormData();
 
+        entries.forEach((val) => {
+            formData.append(val[0], val[1]);
+        });
+        
+        const response = await homes.post(`/homeData/${selectedHome}`, formData);
+        dispatch({ type: EDIT_HOME, payload: response.data });
+    }
+}; 

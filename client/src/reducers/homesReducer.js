@@ -5,7 +5,6 @@ import {
 } from '../actions/types';
 
 export default (state = {}, action) => {
-    console.log('action.payload', action.payload);
     switch (action.type) {
         case FETCH_HOMES:
             return { ...state, ..._.mapKeys(action.payload, 'id') };
