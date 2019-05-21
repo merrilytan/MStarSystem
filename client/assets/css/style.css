@@ -1,5 +1,9 @@
 body {
-  background-color: #eee !important; }
+  background-color: #eee !important;
+  overflow-y: scroll; }
+
+* {
+  box-sizing: border-box; }
 
 .home.icon {
   color: rgba(0, 0, 0, 0.4) !important; }
@@ -26,5 +30,25 @@ hr {
 
 .ui.form .field > label {
   color: rgba(0, 0, 0, 0.4) !important; }
+
+.ui.container {
+  max-width: 736px !important; }
+
+.expired {
+  background-color: #fff6f6 !important;
+  border-color: #df3d3d !important;
+  border: solid 2px #9f3a38 !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important; }
+
+.almost-expired {
+  border-color: #da9c21 !important;
+  background-color: #fffbe6 !important;
+  color: #876a38 !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important; }
+
+#outlined-helperText-helper-text {
+  margin-top: 4px; }
 
 /*# sourceMappingURL=style.css.map*/

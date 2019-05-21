@@ -28,7 +28,7 @@ if ($method == 'GET' && $request_id == 'homeData') {
   $sql = "select * from homes";
 
 } elseif ($method == 'GET' && $request_id != 'homeData') {
-  $sql = "select * from homes where id=$request_id";
+  $sql = "select * from homes where home_id=$request_id";
 
 } elseif ($method == 'POST' && $request_id == 'homeData') {
   $home_name = $_POST["home_name"];
@@ -48,7 +48,7 @@ if ($method == 'GET' && $request_id == 'homeData') {
     }
     $count++;
   }
-  $sql = "update homes set $update where id=$request_id";
+  $sql = "update homes set $update where home_id=$request_id";
 }
 
 
@@ -76,13 +76,13 @@ if ($method == 'GET' && $request_id == 'homeData') {
 
 } elseif ($method == 'POST' && $request_id == 'homeData') {
   $last_insert_id = $con->insert_id;
-  $sql = "select * from homes where id=" . $last_insert_id;
+  $sql = "select * from homes where home_id=" . $last_insert_id;
   $newresult = mysqli_query($con,$sql);
     
   echo json_encode(mysqli_fetch_object($newresult));
 
 } elseif ($method == 'POST' && $request_id != 'homeData') {
-  $sql = "select * from homes where id=$request_id";
+  $sql = "select * from homes where home_id=$request_id";
   $newresult = mysqli_query($con,$sql);
     
   echo json_encode(mysqli_fetch_object($newresult));

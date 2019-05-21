@@ -1,4 +1,5 @@
 import React from 'react';
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { BrowserRouter, Route } from 'react-router-dom';
 import HomeCreate from './homes/HomeCreate';
 import HomeEdit from './homes/HomeEdit';
@@ -10,6 +11,7 @@ import Header from './Header';
 const App = () => {
     return (
         <div>
+            <CssBaseline />
             <BrowserRouter>
                 <div>
                     <Header />

@@ -2,21 +2,92 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { createHome } from '../../actions';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent'
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+
+const styles = theme => ({
+    card: {
+        minWidth: 275,
+        maxWidth: 400,
+        textAlign: 'center',
+    },
+    container: {
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+    },
+    header: {
+        paddingTop: '30px',
+        paddingBottom: '20px',
+        textTransform: 'uppercase',
+        color: '#2196f3',
+        flexGrow: 1,
+    },
+    pageContainer: {
+        minHeight: 'calc(100vh - 64px)'
+    },
+    textField: {
+        marginTop: 0,
+        marginBottom: 20,
+    },
+    grid: {
+        width: '80%',
+    },
+    // menu: {
+    //     width: 200
+    // },
+    cssOutlinedInput: {
+        // "&:not(hover):not($disabled):not($cssFocused):not($error) $notchedOutline": {
+        //   borderColor: "red" //default      
+        // },
+        // "&:hover:not($disabled):not($cssFocused):not($error) $notchedOutline": {
+        //   borderColor: "blue" //hovered
+        // },
+        "&$cssFocused $notchedOutline": {
+          borderColor: '#2196f3', //focused
+        }
+    },
+    notchedOutline: {},
+    cssLabel: {},
+    cssFocused: {
+        color: '#2196f3 !important'
+    },
+    error: {},
+    disabled: {},
+    // helper: {
+    //     "#outlined-helperText-helper-text": {
+    //         marginTop: '4px'
+    //     }
+    // }
+});
 
 class HomeCreate extends React.Component {
 
     state = {};
 
-    renderError({ error, touched }){
+    handleChange = name => event => {
+        this.setState({
+          [name]: event.target.value,
+        });
+    };
 
-        if(touched && error) {
-            return (
-                <div className="ui error message">
-                    <div className="header">{error}</div>
-                </div>
-            );
-        }
-    }
+    // renderError({ error, touched }){
+    //     if(touched && error) {
+    //         return (
+    //             <div className="ui error message">
+    //                 <div className="header">{error}</div>
+    //             </div>
+    //         );
+    //     }
+    // }
 
     renderSuccess(){
         if(this.state.success) {
@@ -29,41 +100,101 @@ class HomeCreate extends React.Component {
     }
 
     //error is inside meta
-    renderInput = ({ input, label, meta, placeholder, required }) => {
-        const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
-
+    renderInput = ({ input, label, meta, className, placeholder, required, InputLabelProps, InputProps }) => {
+        //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
+        console.log('meta.error', meta);
         return (
-            <div className={className}>
-                <label>{label}</label>
-                <input {...input} autoComplete="off" placeholder={placeholder} />
-                {this.renderError(meta)}
-            </div>
+            <TextField
+                id="outlined-helperText"
+                label={label}
+                defaultValue = {placeholder}
+                className={className}
+                fullWidth = "true"
+                margin="normal"
+                helperText={meta.error && meta.touched ? meta.error : ''}
+                variant="outlined"
+                autoComplete= "nope"
+                InputLabelProps={InputLabelProps}
+                InputProps={InputProps}
+                required={required ? 'true' : 'false'}
+                error={meta.error && meta.touched ? 'true' : ''}
+                {...input}
+            />
         );
     };
 
     onSubmit = formValues => {
-        // this.props.onSubmit(formValues);  //onSubmit is prop we passed into component
         this.props.createHome(formValues);
         this.props.reset();
         this.state.success = 1;
     }
 
     render(){
+        const { classes } = this.props;
+
         return (
-            <div>
-                <div class="ui hidden divider"></div>
-                <div className = "ui two column centered grid">
-                    <div className = "column">
-                        {/* handleSubmit is from redux form. it automatically adds event.preventDefault */}
-                        <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className ="ui form error success">
-                            <Field name = "home_name" component={this.renderInput} label="Home Name" placeholder="Home Name" required="required" />
-                            <Field name = "primary_first_name" component={this.renderInput} label="First Name" placeholder="First Name" required="required"/>
-                            <Field name = "primary_last_name" component={this.renderInput} label="Last Name" placeholder="Last Name" required="required"/>
-                            <div class="field"><button className="ui button">Submit</button></div>
+            <div className ={`${classes.container} ${classes.pageContainer}`}>
+            <Card className={classes.card}>
+                <Typography variant="h6" className={classes.header}>
+                    Create Home
+                </Typography>
+                <CardContent>
+                    {/* <div class="ui hidden divider"></div> */}
+                    {/* handleSubmit is from redux form. it automatically adds event.preventDefault */}
+                    <form onSubmit = {this.props.handleSubmit(this.onSubmit)} noValidate className={classes.container}>
+                    <Grid 
+                        container 
+                        spacing={12}
+                        className={classes.grid}
+                        alignItems='center'
+                        direction='row'
+                        justify='center'
+                        >
+                        <Grid item xs={12}>
+                            <Field 
+                                name = "home_name" 
+                                component={this.renderInput} 
+                                label="Home Name" 
+                                placeholder="Home Name" 
+                                required="required"
+                                className={classes.textField} 
+                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
+                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Field 
+                                name = "primary_first_name" 
+                                component={this.renderInput} 
+                                label="Primary First Name" 
+                                placeholder="Primary First Name" 
+                                required="required"
+                                className={classes.textField} 
+                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
+                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Field 
+                                name = "primary_last_name" 
+                                component={this.renderInput} 
+                                label="Primary Last Name" 
+                                placeholder="Primary Last Name" 
+                                required="required"
+                                className={classes.textField} 
+                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
+                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <button className="ui button">Submit</button>
                             {this.renderSuccess()}
-                        </form>
-                    </div>
-                </div>
+                        </Grid>
+                    </Grid>
+                    </form>
+                </CardContent>
+                
+            </Card>
             </div>
         );
     };
@@ -88,17 +219,15 @@ const validate = (formValues) => {
     return errors;
 };
 
-//Bc need to connect 'connect' and 'reduxForm', need new syntax
+HomeCreate.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
+
+
 const formWrapped = reduxForm({ 
     form: 'homeCreate', 
     touchOnBlur : false, 
     validate: validate
 })(HomeCreate);
 
-export default connect(null, { createHome })(formWrapped);
-
-//reduxForm wll pass tons of props into HomeCreate
-// export default reduxForm({ //reduxForm very similar syntax with connect
-//     form: 'homeCreate', //name of form
-//     validate: validate
-// })(HomeCreate);
+export default connect(null, { createHome })(withStyles(styles)(formWrapped));
