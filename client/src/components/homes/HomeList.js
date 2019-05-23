@@ -1,144 +1,541 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Field, reduxForm } from 'redux-form';
-import { Link } from 'react-router-dom'
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { fetchHomes } from '../../actions';
-import PropTypes from 'prop-types';
+import { Field, reduxForm } from 'redux-form';
+import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+//import DeleteIcon from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+// import FilterListIcon from '@material-ui/icons/FilterList';
+// import { lighten } from '@material-ui/core/styles/colorManipulator';
+import PrintIcon from '@material-ui/icons/Print';
+// import Fab from '@material-ui/core/Fab';
+// import Icon from '@material-ui/core/Icon';
+//import SaveIcon from '@material-ui/icons/Save';
+
+
+// let counter = 0;
+// function createData(home_name, primary_first_name, due_docs, edit) {
+//     counter += 1;
+//     return { id: counter, home_name, primary_first_name, due_docs, edit};
+// }
+
+function desc(a, b, orderBy) {
+    if (b[orderBy] < a[orderBy]) {
+        return -1;
+    }
+    if (b[orderBy] > a[orderBy]) {
+        return 1;
+    }
+    return 0;
+}
+
+function stableSort(array, cmp) {
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+        const order = cmp(a[0], b[0]);
+        if (order !== 0) return order;
+        return a[1] - b[1];
+    });
+    return stabilizedThis.map(el => el[0]);
+}
+
+function getSorting(order, orderBy) {
+    return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
+}
+
+const rows = [
+  { id: 'home_name', numeric: false, disablePadding: true, label: 'Home Name' },
+  { id: 'primary_first_name', numeric: false, disablePadding: true, label: 'Primary First Name' },
+  { id: 'due_docs', numeric: false, disablePadding: true, label: 'Docs Due' },
+  { id: 'edit', numeric: false, disablePadding: true},
+];
+
+const headerStyles = theme => ({
+    row: {
+        backgroundColor: '#2196f3',
+        // borderBottom: '3px solid #2196f3'
+    }, 
+    font: {
+        fontSize: '12px',
+        color: '#fff',
+        fill: '#fff',
+        fontWeight: 'bold'
+    }
+});
+
+class EnhancedTableHead extends React.Component {
+    createSortHandler = property => event => {
+        this.props.onRequestSort(event, property);
+    };
+
+    render() {
+        const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount } = this.props;
+
+        return (
+            <TableHead>
+                <TableRow className = {classes.row}>
+                    <TableCell padding="checkbox">
+                    <Checkbox
+                        indeterminate={numSelected > 0 && numSelected < rowCount}
+                        checked={numSelected === rowCount}
+                        onChange={onSelectAllClick}
+                        InputProps={{ classes: { root: classes.font, checked: classes.font } }}
+                    />
+                    </TableCell>
+                    {rows.map(
+                    row => (
+                        <TableCell
+                        key={row.id}
+                        align={row.numeric ? 'right' : 'left'}
+                        padding={row.disablePadding ? 'none' : 'default'}
+                        sortDirection={orderBy === row.id ? order : false}
+                        className={classes.font}
+                        >
+                        <Tooltip
+                            title="Sort"
+                            placement={row.numeric ? 'bottom-end' : 'bottom-start'}
+                            enterDelay={300}
+                        >
+                            <TableSortLabel
+                            active={orderBy === row.id}
+                            direction={order}
+                            onClick={this.createSortHandler(row.id)}
+                            className={classes.font}
+                            >
+                            {row.label}
+                            </TableSortLabel>
+                        </Tooltip>
+                        </TableCell>
+                    ),
+                    this,
+                    )}
+                </TableRow>
+            </TableHead>
+        );
+    }
+}
+
+EnhancedTableHead.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.string.isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
+    classes: PropTypes.object.isRequired,
+};
+
+EnhancedTableHead = withStyles(headerStyles)(EnhancedTableHead);
+
+const toolbarStyles = theme => ({
+    root: {
+        paddingRight: theme.spacing.unit,
+        minHeight: '50px',
+        backgroundColor: '#1976d2',
+        borderTopLeftRadius: '3px',
+        borderTopRightRadius: '3px',
+    },
+    // highlight:
+    //     theme.palette.type === 'light'
+    //         ? {
+    //             color: theme.palette.secondary.main,
+    //             backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+    //         }
+    //         : {
+    //             color: theme.palette.text.primary,
+    //             backgroundColor: theme.palette.secondary.dark,
+    //         },
+    spacer: {
+        flex: '1 1 100%',
+    },
+    actions: {
+        color: theme.palette.text.secondary,
+    },
+    title: {
+        flex: '0 0 auto',
+    },
+    header: {
+        textTransform: 'uppercase',
+        color: '#fff',
+        flexGrow: 1,
+    },
+    font: {
+        color: '#fff'
+    }
+});
+
+let EnhancedTableToolbar = props => {
+    const { numSelected, classes } = props;
+
+    return (
+        <Toolbar 
+            className={classNames(classes.root, {
+            [classes.highlight]: numSelected > 0,
+            })}
+        >
+            <div className={classes.title}>
+                {numSelected > 0 ? (
+                    <Typography className={classes.font} variant="subtitle1">
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography variant="h6" id="tableTitle" className={classes.header}>
+                        Open Homes
+                    </Typography>
+                )}
+            </div>
+            <div className={classes.spacer} />
+            <div className={classes.actions}>
+                {numSelected > 0 ? (
+                    <Tooltip title="Print">
+                    <IconButton aria-label="Print">
+                        <PrintIcon />
+                    </IconButton>
+                    </Tooltip>
+                ) : (
+                    ""
+                )}
+            </div>
+        </Toolbar>
+    );
+};
+
+EnhancedTableToolbar.propTypes = {
+    classes: PropTypes.object.isRequired,
+    numSelected: PropTypes.number.isRequired,
+};
+
+EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
+    header: {
+        maxHeight: '50px',
+        width: '100%',
+        backgroundColor: '#fff',
+        fontWeight: 'bold',
+        textTransform: 'uppercase',
+        lineHeight: '50px',
+        paddingLeft: '24px',
+    },
     root: {
+        width: '97%',
+        marginTop: theme.spacing.unit * 3,
+        minHeight: 'calc(100vh - 225px)',
+    },
+    table: {
+        minWidth: 200,
+    },
+    tableWrapper: {
+        overflowX: 'auto',
+    },
+    container: {
+        width: '100%',
         display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'center',
         flexWrap: 'wrap',
     },
-    formControl: {
-        display: 'flex',
-        margin: theme.spacing.unit,
+    pageContainer: {
+        minHeight: 'calc(100vh - 175px)',
     },
-    dashboardContainer: {
-        display: 'flex',
-        margin: theme.spacing.unit,
-        width: '200px',
-        backgroundColor: 'yellow'
+    due: {
+        width: '25px',
+        height: '25px',
+        borderRadius: '3px',
+        display: 'inline-block',
+        marginRight: '5px',
+        fontWeight: 'bold',
+        lineHeight: '25px',
+        textAlign: 'center'
     },
-    labelWidth: {
-        labelWidth: 300
+    dueAlmost: {
+        backgroundColor: '#ffe082'
+    }, 
+    dueExpired: {
+        backgroundColor: '#e57373'
+    },
+    font: {
+        fontSize: '12px',
+        color: '#fff',
+        fill: '#fff'
+    },
+    button: {
+        margin: theme.spacing.unit,
+        backgroundColor: '#2196f3',
+        color: '#fff'
+    },
+    leftIcon: {
+        marginRight: theme.spacing.unit,
+    },
+    rightIcon: {
+        marginLeft: theme.spacing.unit,
+    },
+    iconSmall: {
+        fontSize: 20,
     },
 });
 
 class HomeList extends React.Component {
     state = {
-        labelWidth: 0
+        order: 'asc',
+        orderBy: 'primary_first_name',
+        selected: [],
+        page: 0,
+        rowsPerPage: 5,
+        dueList: [],
     };
 
     componentDidMount() {
         this.props.fetchHomes();
-        this.setState({
-            labelWidth: ReactDOM.findDOMNode(this.InputLabelRef).offsetWidth,
-        });
     }
 
-    // renderError({ error, touched }){
-    //     if(touched && error) {
-    //         return (
-    //             <div className="ui error message">
-    //                 <div className="header">{error}</div>
-    //             </div>
-    //         );
-    //     }
-    // }
-
-    renderSelect = ({ input, label, meta, className }) => {
-        //const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
-        return (
-            <div className = {className}>
-                <InputLabel
-                    ref={ref => {
-                    this.InputLabelRef = ref;
-                    }}
-                    htmlFor="outlined-age-simple"
+    almost_expired = (numDocs, classDue, classDueAlmost) => {
+        if(numDocs != 0){
+            return (
+                <Tooltip
+                    title="Almost Due"
+                    placement={'bottom-start'}
+                    enterDelay={300}
                 >
-                    {label}
-                </InputLabel>
-                <Select 
-                    autoWidth="false"
-                    onChange={this.onChange} 
-                    value={this.state.select} 
-                    variant="outlined"  
-                    input={<OutlinedInput fullWidth="true" labelWidth={this.state.labelWidth} name="age" />}
-                    {...input} 
-                >
-                    <MenuItem value = "" style={{minWidth: 200}}>Choose Home</MenuItem>
-                    {this.props.homes.map((home) => (
-                        <MenuItem value = {home.home_id}>{ home.home_name }</MenuItem>                      
-                    ))}
-                </Select>
-                {/* {this.renderError(meta)} */}
-            </div>
-        );
+                    <div className={`${classDue} ${classDueAlmost}`}>{numDocs}</div>
+                </Tooltip>
+            );
+        } else {
+            return ('')
+        }
+    }
 
-        // return (
-        //     <div className={className}>
-        //         <label>{label}</label>
-        //         <select {...input} onChange={this.onChange} value={this.state.select} class="ui fluid search selection dropdown">
-        //             <option value = "">Choose Home</option>
-        //             {this.props.homes.map((home) => (
-        //                 <option value = {home.home_id}>{ home.home_name }</option>                      
-        //             ))}
-        //         </select>
-        //         {this.renderError(meta)}
-        //     </div>
-        // );
+    expired = (numDocs, classDue, classDueExpired) => {
+        if(numDocs != 0){
+            return (
+                <Tooltip
+                    title="Overdue"
+                    placement={'bottom-start'}
+                    enterDelay={300}
+                >
+                    <div className={`${classDue} ${classDueExpired}`}>{numDocs}</div>
+                </Tooltip>
+            );  
+        } else {
+            return ('')
+        }   
+    }
+
+    checkDate = (input) => {
+        var currentDate = new Date();
+        var inputDate = new Date(input);
+        var diffMilliseconds = Math.abs(inputDate.getTime() - currentDate.getTime());
+        var diffDays = Math.ceil(diffMilliseconds/86400000);
+    
+        if(currentDate > inputDate && diffDays > 1 ){
+            return ("expired");
+        } else if (diffDays <=30 ){
+            return ("almost-expired");
+        }
+    }
+
+    fillDueList = () => {
+        let tempArray = [];
+        this.props.homes.map((home) => {
+            let countAlmostExpired = 0;
+            let countExpired = 0;
+            let tempObj = {};
+            const homeValues = Object.entries(home);
+            homeValues.map((homeValue) => {
+                if(homeValue[0] === "home_id"){
+                    tempObj[homeValue[0]] = homeValue[1];
+                } else if(homeValue[0] === "home_name"){
+                    tempObj[homeValue[0]] = homeValue[1];
+                } else if(homeValue[0] === "primary_first_name"){
+                    tempObj[homeValue[0]] = homeValue[1];
+                } else if(Date.parse(homeValue[1]) && homeValue[0]!="home_opened"){
+                    const dateStatus = this.checkDate(homeValue[1]);
+                    if(dateStatus == "almost-expired"){
+                        countAlmostExpired++;
+                    } else if(dateStatus == "expired"){
+                        countExpired++;
+                    }
+                }
+            });
+            tempObj['almost_expired'] = countAlmostExpired;
+            tempObj['expired'] = countExpired;
+            tempArray.push(tempObj);
+        });
+        console.log('tempArray', tempArray);
+        this.setState({ dueList: tempArray });
     };
 
-    onChange = (event) => {
-        this.setState({select: event.target.value});
+    handleRequestSort = (event, property) => {
+        const orderBy = property;
+        let order = 'desc';
+
+        if (this.state.orderBy === property && this.state.order === 'desc') {
+            order = 'asc';
+        }
+
+        this.setState({ order, orderBy });
+    };
+
+    handleSelectAllClick = event => {
+    if (event.target.checked) {
+        this.setState({ selected: this.props.homes.map(home => home.home_id) });
+        return;
     }
+    this.setState({ selected: [] });
+    };
+
+    handleClick = (event, id) => {
+        const { selected } = this.state;
+        const selectedIndex = selected.indexOf(id);
+        let newSelected = [];
+
+        if (selectedIndex === -1) {
+            newSelected = newSelected.concat(selected, id);
+        } else if (selectedIndex === 0) {
+            newSelected = newSelected.concat(selected.slice(1));
+        } else if (selectedIndex === selected.length - 1) {
+            newSelected = newSelected.concat(selected.slice(0, -1));
+        } else if (selectedIndex > 0) {
+            newSelected = newSelected.concat(
+            selected.slice(0, selectedIndex),
+            selected.slice(selectedIndex + 1),
+            );
+        }
+
+        this.setState({ selected: newSelected });
+    };
+
+    handleChangePage = (event, page) => {
+        this.setState({ page });
+    };
+
+    handleChangeRowsPerPage = event => {
+        this.setState({ rowsPerPage: event.target.value });
+    };
+
+    isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        const { classes } = this.props;
-
-        return (
-            // <div>
-            //      <div class="ui hidden divider"></div>
-            //     <div className = "ui two column centered grid">
-            //         <div className = "column">
-            //             <form className ="ui form error"> 
-                    <div>
-                        <FormControl variant="outlined" className={classes.formControl}>
-                            <Field name="homeSelected" component={this.renderSelect} label="Open Homes" className = {classes.dashboardContainer}/>
-                                {/* <MenuItem value="ff0000" primaryText="Red" />
-                                <MenuItem value="00ff00" primaryText="Green" />
-                                <MenuItem value="0000ff" primaryText="Blue" />   */}
-
-                        </FormControl>
+        console.log('this.props', this.props);
+        const { classes, homes } = this.props;
+        const { dueList, order, orderBy, selected, rowsPerPage, page } = this.state;
+        const emptyRows = rowsPerPage - Math.min(rowsPerPage, homes.length - page * rowsPerPage);
+        
+        if(homes[0] && !dueList[0]){
+            this.fillDueList();
+        }
+            
+        if(dueList[0]){
+            return (
+                <div className ={`${classes.container} ${classes.pageContainer}`}>
+                    <div className = {classes.header}>
+                        Open Homes
                     </div>
-            //                   <Field name="homeSelected" component={this.renderSelect} label="Open Homes" /> */}
-            //                 <div className="field"><Link to= {`/homes/edit/${this.state.select}`} className="ui button">Edit Home</Link></div>
-            //             </form>
-            //         </div>
-            //     </div>
-            // </div>
-        );
+                    <Paper className={classes.root}>
+                        <EnhancedTableToolbar numSelected={selected.length} />
+                        <div className={classes.tableWrapper}>
+                            <Table className={classes.table} aria-labelledby="tableTitle">
+                            <EnhancedTableHead
+                                numSelected={selected.length}
+                                order={order}
+                                orderBy={orderBy}
+                                onSelectAllClick={this.handleSelectAllClick}
+                                onRequestSort={this.handleRequestSort}
+                                rowCount={homes.length}
+                            />
+                            <TableBody>
+                                {stableSort(dueList, getSorting(order, orderBy))
+                                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                .map(n => {
+                                    const isSelected = this.isSelected(n.home_id);
+                                    return (
+                                    <TableRow
+                                        hover
+                                        onClick={event => this.handleClick(event, n.home_id)}
+                                        role="checkbox"
+                                        aria-checked={isSelected}
+                                        tabIndex={-1}
+                                        key={n.home_id}
+                                        selected={isSelected}
+                                    >
+                                        <TableCell padding="checkbox">
+                                            <Checkbox 
+                                                checked={isSelected}   
+                                                InputProps={{ classes: { root: classes.font, checked: classes.font } }}
+                                            />
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" padding="none">
+                                            {n.home_name}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" padding="none">
+                                            {n.primary_first_name}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" padding="none">
+                                            {this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost)}
+                                            {this.expired(n.expired, classes.due, classes.dueExpired)}
+                                            {(!this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost) && !this.expired(n.expired, classes.due, classes.dueExpired)) ? 'Up to Date' : ''}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row" padding="none">
+                                            {/* <IconButton component={Link} to={`/homes/edit/${n.home_id}`} aria-label="Edit">
+                                                <Edit />
+                                            </IconButton> */}
+                                            <Button variant="contained" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
+                                                Edit
+                                            </Button>
+                                            {/* <Button variant="contained" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
+                                                Edit
+                                            </Button> */}
+                                        </TableCell>
+                                    </TableRow>
+                                    );
+                                })}
+                                {emptyRows > 0 && (
+                                <TableRow style={{ height: 49 * emptyRows }}>
+                                    <TableCell colSpan={6} />
+                                </TableRow>
+                                )}
+                            </TableBody>
+                            </Table>
+                        </div>
+                        <TablePagination
+                            rowsPerPageOptions={[5, 10, 25]}
+                            component="div"
+                            count={homes.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            backIconButtonProps={{
+                            'aria-label': 'Previous Page',
+                            }}
+                            nextIconButtonProps={{
+                            'aria-label': 'Next Page',
+                            }}
+                            onChangePage={this.handleChangePage}
+                            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                        />
+                    </Paper>
+                </div>
+            );
+        } else {
+            return (<div>""</div>);
+        } 
     }
 }
-
-const validate = (formValues) => {
-    const errors = {};
-    
-    if(formValues.homeSelected == "" || !formValues.homeSelected) {
-        errors.homeSelected = 'You must choose a home to edit.';
-    }
-
-    return errors;
-};
-
 
 const mapStateToProps = (state) => {
     return { homes: Object.values(state.homes)}; //Object.values turns it into an array so it's easier for us to loop through
@@ -151,7 +548,6 @@ HomeList.propTypes = {
 const formWrapped = reduxForm({ 
     form: 'homeList', 
     touchOnBlur : false, 
-    validate: validate
 })(HomeList);
 
 export default connect(mapStateToProps, { fetchHomes })(withStyles(styles)(formWrapped));

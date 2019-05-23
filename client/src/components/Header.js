@@ -31,9 +31,9 @@ const Header = (props) => {
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
                 <Toolbar>
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+                    {/* <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
                         <MenuIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <Typography component={Link} to="/" variant="h6" color="inherit" className={classes.grow}>
                         m*system
                     </Typography>
