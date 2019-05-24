@@ -12,9 +12,11 @@ import { Link } from 'react-router-dom';
 const styles = {
     root: {
       flexGrow: 1,
+      boxShadow: 'none'
     },
     appBar: {
         backgroundColor: '#2196f3',
+        boxShadow: 'none'
     },
     grow: {
       flexGrow: 1,

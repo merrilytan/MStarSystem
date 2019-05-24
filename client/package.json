@@ -16,6 +16,7 @@
     "babel-polyfill": "^6.26.0",
     "contentful": "^7.6.0",
     "history": "^4.9.0",
+    "jspdf": "^1.5.3",
     "lodash": "^4.17.11",
     "object-diff": "0.0.4",
     "react": "^16.7.0",

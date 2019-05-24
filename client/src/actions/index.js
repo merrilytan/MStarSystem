@@ -19,10 +19,14 @@ export const fetchHome = (selectedHome) => {
 export const createHome = (formValues) => {
     return async (dispatch, getState) => {
 
+        const home_name_capitalized = formValues.home_name.charAt(0).toUpperCase() + formValues.home_name.slice(1);
+        const primary_first_name_capitalized = formValues.primary_first_name.charAt(0).toUpperCase() + formValues.primary_first_name.slice(1);
+        const primary_last_name_capitalized = formValues.primary_last_name.charAt(0).toUpperCase() + formValues.primary_last_name.slice(1);
+
         let formData = new FormData();
-        formData.append('home_name', formValues.home_name);
-        formData.append('primary_first_name', formValues.primary_first_name);
-        formData.append('primary_last_name', formValues.primary_last_name);
+        formData.append('home_name', home_name_capitalized);
+        formData.append('primary_first_name', primary_first_name_capitalized);
+        formData.append('primary_last_name', primary_last_name_capitalized);
         const response = await homes.post('/homeData', formData);
 
         dispatch({ type: CREATE_HOME, payload: response.data });

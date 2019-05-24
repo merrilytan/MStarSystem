@@ -24,6 +24,7 @@ import Button from '@material-ui/core/Button';
 // import FilterListIcon from '@material-ui/icons/FilterList';
 // import { lighten } from '@material-ui/core/styles/colorManipulator';
 import PrintIcon from '@material-ui/icons/Print';
+import * as jsPDF from 'jspdf';
 // import Fab from '@material-ui/core/Fab';
 // import Icon from '@material-ui/core/Icon';
 //import SaveIcon from '@material-ui/icons/Save';
@@ -45,6 +46,7 @@ function desc(a, b, orderBy) {
     return 0;
 }
 
+
 function stableSort(array, cmp) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -59,6 +61,21 @@ function getSorting(order, orderBy) {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
+function checkDate(input) {
+    var currentDate = new Date();
+    var inputDate = new Date(input);
+    var diffMilliseconds = Math.abs(inputDate.getTime() - currentDate.getTime());
+    var diffDays = Math.ceil(diffMilliseconds/86400000);
+
+    if(currentDate > inputDate && diffDays > 1 ){
+        return ("expired");
+    } else if (diffDays <=30 ){
+        return ("almost-expired");
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+
 const rows = [
   { id: 'home_name', numeric: false, disablePadding: true, label: 'Home Name' },
   { id: 'primary_first_name', numeric: false, disablePadding: true, label: 'Primary First Name' },
@@ -68,13 +85,14 @@ const rows = [
 
 const headerStyles = theme => ({
     row: {
-        backgroundColor: '#2196f3',
+        //backgroundColor: '#2196f3',
         // borderBottom: '3px solid #2196f3'
+        backgroundColor: '#fff',
     }, 
     font: {
-        fontSize: '12px',
-        color: '#fff',
-        fill: '#fff',
+        fontSize: '14px',
+        fontFamily: 'Calibri',
+        color: '#676a6c',
         fontWeight: 'bold'
     }
 });
@@ -143,13 +161,16 @@ EnhancedTableHead.propTypes = {
 
 EnhancedTableHead = withStyles(headerStyles)(EnhancedTableHead);
 
+//-----------------------------------------------------------------------------------------------------------------------
+
 const toolbarStyles = theme => ({
     root: {
         paddingRight: theme.spacing.unit,
-        minHeight: '50px',
-        backgroundColor: '#1976d2',
+        //height: '0px',
         borderTopLeftRadius: '3px',
         borderTopRightRadius: '3px',
+        borderTop: '2px solid #e7eaec',
+        borderBottom: '1px solid #e7eaec'
     },
     // highlight:
     //     theme.palette.type === 'light'
@@ -171,49 +192,142 @@ const toolbarStyles = theme => ({
         flex: '0 0 auto',
     },
     header: {
-        textTransform: 'uppercase',
-        color: '#fff',
+        color: '#676a6c',
         flexGrow: 1,
+        fontSize: '14px',
+        fontWeight: 'bold',
     },
     font: {
         color: '#fff'
     }
 });
 
-let EnhancedTableToolbar = props => {
-    const { numSelected, classes } = props;
+class EnhancedTableToolbar extends React.Component {
 
-    return (
-        <Toolbar 
-            className={classNames(classes.root, {
-            [classes.highlight]: numSelected > 0,
-            })}
-        >
-            <div className={classes.title}>
-                {numSelected > 0 ? (
-                    <Typography className={classes.font} variant="subtitle1">
-                        {numSelected} selected
-                    </Typography>
-                ) : (
-                    <Typography variant="h6" id="tableTitle" className={classes.header}>
-                        Open Homes
-                    </Typography>
-                )}
-            </div>
-            <div className={classes.spacer} />
-            <div className={classes.actions}>
-                {numSelected > 0 ? (
-                    <Tooltip title="Print">
-                    <IconButton aria-label="Print">
-                        <PrintIcon />
-                    </IconButton>
-                    </Tooltip>
-                ) : (
-                    ""
-                )}
-            </div>
-        </Toolbar>
-    );
+    checkDate = (input) => {
+        var currentDate = new Date();
+        var inputDate = new Date(input);
+        var diffMilliseconds = Math.abs(inputDate.getTime() - currentDate.getTime());
+        var diffDays = Math.ceil(diffMilliseconds/86400000);
+    
+        if(currentDate > inputDate && diffDays > 1 ){
+            return ("expired");
+        } else if (diffDays <=30 ){
+            return ("almost-expired");
+        } else {
+            return ('');
+        }
+    }
+
+    printPDF = (homes, selected) => {
+   
+        const generateTable = (home) => {
+            let result = [];
+            const homeValues = Object.entries(home);
+            let data = {};
+
+            homeValues.forEach(homeValue => {
+                if(homeValue[0] != 'home_id' && homeValue[0] != 'home_name'){
+                    data[homeValue[0]] = homeValue[1];
+                }
+            });
+
+            result.push(Object.assign({}, data));
+            console.log('result', result);
+            return result;
+        };
+
+        const createHeaders = (keys) => {
+            var result = [];
+            for (var i = 0; i < keys.length; i += 1) {
+                result.push({
+                'id' : keys[i],
+                    'name': keys[i],
+                    'prompt': keys[i],
+                    'width': 65,
+                    'align': 'center',
+                    'padding': 0
+                });
+            }
+            return result;
+        }
+
+        let tempArray = [];
+        console.log('selected', selected);
+
+        homes.forEach((home) => {
+            let tempObj = {};
+            const homeValues = Object.entries(home);
+            homeValues.forEach((homeValue) => {
+                if(homeValue[0] === "home_id"){
+                    tempObj[homeValue[0]] = homeValue[1];
+                } else if(homeValue[0] === "home_name"){
+                    tempObj[homeValue[0]] = homeValue[1];
+                } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
+                    const dt = new Date(homeValue[1]);
+                    if(!isNaN(dt.getTime())){
+                        const dateStatus = checkDate(homeValue[1]);
+                        if(dateStatus == "almost-expired" || dateStatus == "expired"){
+                            tempObj[homeValue[0]] = homeValue[1];
+                        }
+                    }
+                }
+            });
+            tempArray.push(tempObj);
+            console.log('tempArray', tempArray);
+        });
+
+        const orderedHomes = stableSort(tempArray, getSorting('asc', 'home_name'));
+        console.log('orderedHomes', orderedHomes);
+        
+        const headers = createHeaders(["Document", "Expiry Date"]);
+        const pdf = new jsPDF();
+
+        orderedHomes.forEach(home => {
+            pdf.text(10, 10, home.home_name);
+            pdf.table(1, 1, generateTable(home), headers, { autoSize: true });
+        });
+    
+        pdf.save();
+    };
+
+
+    render() {
+        const { numSelected, classes, homes, selected } = this.props;
+        console.log('homesssssssssssss', homes);
+
+        return (
+            <Toolbar 
+                className={classNames(classes.root, {
+                [classes.highlight]: numSelected > 0,
+                })}
+            >
+                <div className={classes.title}>
+                    {numSelected > 0 ? (
+                        <Typography className={classes.font} variant="subtitle1">
+                            {numSelected} selected
+                        </Typography>
+                    ) : (
+                        <Typography variant="h6" id="tableTitle" className={classes.header}>
+                            Open Homes
+                        </Typography>
+                    )}
+                </div>
+                <div className={classes.spacer} />
+                <div className={classes.actions}>
+                    {numSelected > 0 ? (
+                        <Tooltip title="Print">
+                        <IconButton aria-label="Print" onClick={() => this.printPDF(homes, selected)}>
+                            <PrintIcon />
+                        </IconButton>
+                        </Tooltip>
+                    ) : (
+                        ""
+                    )}
+                </div>
+            </Toolbar>
+        );
+    }
 };
 
 EnhancedTableToolbar.propTypes = {
@@ -223,26 +337,29 @@ EnhancedTableToolbar.propTypes = {
 
 EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
+//-----------------------------------------------------------------------------------------------------------------------
+
 const styles = theme => ({
-    header: {
-        maxHeight: '50px',
-        width: '100%',
-        backgroundColor: '#fff',
-        fontWeight: 'bold',
-        textTransform: 'uppercase',
-        lineHeight: '50px',
-        paddingLeft: '24px',
-    },
     root: {
-        width: '97%',
-        marginTop: theme.spacing.unit * 3,
+        width: '93%',
+        marginTop: '45px',
         minHeight: 'calc(100vh - 225px)',
+        boxShadow: 'none'
     },
     table: {
         minWidth: 200,
+        fontFamily: 'Calibri',
+        fontSize: '14px',
+        color: '#676a6c',
+        boxShadow: 'none'
     },
     tableWrapper: {
         overflowX: 'auto',
+        backgroundColor: 'rgba(0,0,0,.05)',
+        boxShadow: 'none',
+        fontFamily: 'Calibri',
+        fontSize: '14px',
+        color: '#676a6c',
     },
     container: {
         width: '100%',
@@ -262,18 +379,20 @@ const styles = theme => ({
         marginRight: '5px',
         fontWeight: 'bold',
         lineHeight: '25px',
-        textAlign: 'center'
+        textAlign: 'center',
+        color: '#fff',
+        cursor: 'default'
     },
     dueAlmost: {
-        backgroundColor: '#ffe082'
+        backgroundColor: '#ffd54f',
     }, 
     dueExpired: {
-        backgroundColor: '#e57373'
+        backgroundColor: '#e57373',
     },
     font: {
-        fontSize: '12px',
-        color: '#fff',
-        fill: '#fff'
+    //     fontSize: '12px',
+    //     color: '#fff',
+    //     fill: '#fff'
     },
     button: {
         margin: theme.spacing.unit,
@@ -288,6 +407,12 @@ const styles = theme => ({
     },
     iconSmall: {
         fontSize: 20,
+    },
+    row: {
+        fontFamily: 'Calibri',
+        fontSize: '14px',
+        color: '#676a6c',
+        height: '30px !important'
     },
 });
 
@@ -321,6 +446,12 @@ class HomeList extends React.Component {
         }
     }
 
+    blank = (classDue) => {
+        return (
+            <div className={classDue}>.</div>
+        );
+    }
+
     expired = (numDocs, classDue, classDueExpired) => {
         if(numDocs != 0){
             return (
@@ -337,19 +468,6 @@ class HomeList extends React.Component {
         }   
     }
 
-    checkDate = (input) => {
-        var currentDate = new Date();
-        var inputDate = new Date(input);
-        var diffMilliseconds = Math.abs(inputDate.getTime() - currentDate.getTime());
-        var diffDays = Math.ceil(diffMilliseconds/86400000);
-    
-        if(currentDate > inputDate && diffDays > 1 ){
-            return ("expired");
-        } else if (diffDays <=30 ){
-            return ("almost-expired");
-        }
-    }
-
     fillDueList = () => {
         let tempArray = [];
         this.props.homes.map((home) => {
@@ -364,12 +482,15 @@ class HomeList extends React.Component {
                     tempObj[homeValue[0]] = homeValue[1];
                 } else if(homeValue[0] === "primary_first_name"){
                     tempObj[homeValue[0]] = homeValue[1];
-                } else if(Date.parse(homeValue[1]) && homeValue[0]!="home_opened"){
-                    const dateStatus = this.checkDate(homeValue[1]);
-                    if(dateStatus == "almost-expired"){
-                        countAlmostExpired++;
-                    } else if(dateStatus == "expired"){
-                        countExpired++;
+                } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
+                    const dt = new Date(homeValue[1]);
+                    if(!isNaN(dt.getTime())){
+                        const dateStatus = checkDate(homeValue[1]);
+                        if(dateStatus == "almost-expired"){
+                            countAlmostExpired++;
+                        } else if(dateStatus == "expired"){
+                            countExpired++;
+                        }
                     }
                 }
             });
@@ -444,11 +565,12 @@ class HomeList extends React.Component {
         if(dueList[0]){
             return (
                 <div className ={`${classes.container} ${classes.pageContainer}`}>
-                    <div className = {classes.header}>
-                        Open Homes
-                    </div>
                     <Paper className={classes.root}>
-                        <EnhancedTableToolbar numSelected={selected.length} />
+                        <EnhancedTableToolbar 
+                            numSelected={selected.length} 
+                            homes={homes} 
+                            selected={selected}
+                        />
                         <div className={classes.tableWrapper}>
                             <Table className={classes.table} aria-labelledby="tableTitle">
                             <EnhancedTableHead
@@ -459,7 +581,7 @@ class HomeList extends React.Component {
                                 onRequestSort={this.handleRequestSort}
                                 rowCount={homes.length}
                             />
-                            <TableBody>
+                            <TableBody className ={classes.table}>
                                 {stableSort(dueList, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map(n => {
@@ -473,6 +595,7 @@ class HomeList extends React.Component {
                                         tabIndex={-1}
                                         key={n.home_id}
                                         selected={isSelected}
+                                        className={classes.row}
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox 
@@ -488,6 +611,7 @@ class HomeList extends React.Component {
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">
                                             {this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost)}
+                                            {(!this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost) && this.expired(n.expired, classes.due, classes.dueExpired)) ? this.blank(classes.due) : ''}
                                             {this.expired(n.expired, classes.due, classes.dueExpired)}
                                             {(!this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost) && !this.expired(n.expired, classes.due, classes.dueExpired)) ? 'Up to Date' : ''}
                                         </TableCell>
@@ -532,7 +656,7 @@ class HomeList extends React.Component {
                 </div>
             );
         } else {
-            return (<div>""</div>);
+            return ('');
         } 
     }
 }
