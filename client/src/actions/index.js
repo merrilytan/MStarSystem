@@ -35,13 +35,17 @@ export const createHome = (formValues) => {
 
 export const editHome = (selectedHome, formValues) => {
     return async (dispatch, getState) => {
+
         const entries = Object.entries(formValues);
         let formData = new FormData();
 
         entries.forEach((val) => {
+            if (val[1] == "" ){
+                val[1] = null;
+            }
             formData.append(val[0], val[1]);
         });
-        
+
         const response = await homes.post(`/homeData/${selectedHome}`, formData);
         dispatch({ type: EDIT_HOME, payload: response.data });
     }

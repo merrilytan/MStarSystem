@@ -42,9 +42,9 @@ if ($method == 'GET' && $request_id == 'homeData') {
 
   foreach($_POST as $key => $value) {
     if($count == 0){
-      $update = "$key = '$value'";
+      $update = $value == "null" ? "$key = NULL" : "$key = '$value'";
     } else {
-      $update = "$update, $key = '$value'";
+      $update = $value == "null" ? "$update, $key = NULL" : "$update, $key = '$value'";
     }
     $count++;
   }

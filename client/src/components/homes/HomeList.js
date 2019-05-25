@@ -25,6 +25,7 @@ import Button from '@material-ui/core/Button';
 // import { lighten } from '@material-ui/core/styles/colorManipulator';
 import PrintIcon from '@material-ui/icons/Print';
 import * as jsPDF from 'jspdf';
+import * as autoTable from 'jspdf-autotable';
 // import Fab from '@material-ui/core/Fab';
 // import Icon from '@material-ui/core/Icon';
 //import SaveIcon from '@material-ui/icons/Save';
@@ -113,7 +114,7 @@ class EnhancedTableHead extends React.Component {
                         indeterminate={numSelected > 0 && numSelected < rowCount}
                         checked={numSelected === rowCount}
                         onChange={onSelectAllClick}
-                        InputProps={{ classes: { root: classes.font, checked: classes.font } }}
+                        inputprops={{ classes: { root: classes.font, checked: classes.font } }}
                     />
                     </TableCell>
                     {rows.map(
@@ -202,6 +203,10 @@ const toolbarStyles = theme => ({
     }
 });
 
+
+
+
+
 class EnhancedTableToolbar extends React.Component {
 
     checkDate = (input) => {
@@ -219,82 +224,118 @@ class EnhancedTableToolbar extends React.Component {
         }
     }
 
+
+
     printPDF = (homes, selected) => {
    
-        const generateTable = (home) => {
-            let result = [];
-            const homeValues = Object.entries(home);
-            let data = {};
+        const generateBody = (orderedHomes) => {
+            let body = [];
+            let lengths = [];
+            orderedHomes.forEach(home => {
+                
+                let length = 0;
+                const homeValues = Object.entries(home);
 
-            homeValues.forEach(homeValue => {
-                if(homeValue[0] != 'home_id' && homeValue[0] != 'home_name'){
-                    data[homeValue[0]] = homeValue[1];
+                homeValues.forEach(homeValue => {
+                    if(homeValue[0] != 'home_id' && homeValue[0] != 'home_name'){
+                        let data = {};
+                        data['name'] = homeValue[0];
+                        data['date'] = homeValue[1];
+                        body.push(data);
+                        length++;
+                    }
+                });
+
+                if(length === 0) {
+                    body.push({'name': 'up to date', 'date': '-'});
+                    length++;
                 }
+
+                lengths.push(length);
             });
 
-            result.push(Object.assign({}, data));
-            console.log('result', result);
-            return result;
+            return { body, lengths };
         };
 
-        const createHeaders = (keys) => {
-            var result = [];
-            for (var i = 0; i < keys.length; i += 1) {
-                result.push({
-                'id' : keys[i],
-                    'name': keys[i],
-                    'prompt': keys[i],
-                    'width': 65,
-                    'align': 'center',
-                    'padding': 0
-                });
-            }
-            return result;
+        const headRows = () => {
+            return [{'row_info': 'Row Info', name: 'Name', date: 'Date' }];
         }
 
         let tempArray = [];
-        console.log('selected', selected);
 
         homes.forEach((home) => {
             let tempObj = {};
-            const homeValues = Object.entries(home);
-            homeValues.forEach((homeValue) => {
-                if(homeValue[0] === "home_id"){
-                    tempObj[homeValue[0]] = homeValue[1];
-                } else if(homeValue[0] === "home_name"){
-                    tempObj[homeValue[0]] = homeValue[1];
-                } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
-                    const dt = new Date(homeValue[1]);
-                    if(!isNaN(dt.getTime())){
-                        const dateStatus = checkDate(homeValue[1]);
-                        if(dateStatus == "almost-expired" || dateStatus == "expired"){
-                            tempObj[homeValue[0]] = homeValue[1];
+
+            if(selected.includes(home.home_id)){
+                const homeValues = Object.entries(home);
+                homeValues.forEach((homeValue) => {
+                    if((homeValue[0] === "home_id") || (homeValue[0] === "home_name")){
+                        tempObj[homeValue[0]] = homeValue[1];
+                    } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
+                        const dt = new Date(homeValue[1]);
+                        if(!isNaN(dt.getTime())){
+                            const dateStatus = checkDate(homeValue[1]);
+                            if(dateStatus == "almost-expired" || dateStatus == "expired"){
+                                tempObj[homeValue[0]] = homeValue[1];
+                            }
                         }
                     }
-                }
-            });
-            tempArray.push(tempObj);
-            console.log('tempArray', tempArray);
+                });
+                tempArray.push(tempObj);
+            }
         });
 
         const orderedHomes = stableSort(tempArray, getSorting('asc', 'home_name'));
-        console.log('orderedHomes', orderedHomes);
         
-        const headers = createHeaders(["Document", "Expiry Date"]);
-        const pdf = new jsPDF();
+        let today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        const yyyy = today.getFullYear();
+        today = yyyy + '/' + mm + '/' + dd;
 
-        orderedHomes.forEach(home => {
-            pdf.text(10, 10, home.home_name);
-            pdf.table(1, 1, generateTable(home), headers, { autoSize: true });
+        const pdf = new jsPDF('p', 'pt');
+
+        const { body, lengths } = generateBody(orderedHomes);
+
+        let homeIndex = 0;
+        let homeValueCount = 0;
+
+        for (var i = 0; i < body.length; i++) {
+            
+            while(lengths[homeIndex] == 0) {
+                homeIndex++;
+            }
+            var row = body[i];
+            
+            if(homeValueCount === 0){
+                row['row_info'] = {rowSpan: lengths[homeIndex], content: orderedHomes[homeIndex].home_name, styles: {valign: 'middle', halign: 'center'}};
+            } 
+            
+            if(homeValueCount == (lengths[homeIndex]-1)){
+                homeIndex++;
+                homeValueCount = 0;
+            } else {
+                homeValueCount++;
+            }
+        }
+
+        const text = `Home Docs (Almost Due/Overdue) - ${today}`;
+        let head = headRows();
+        head[0]['row_info'] = {content: text, colSpan: 5, styles: {fillColor: [33, 150, 243]}};
+        
+        pdf.autoTable({
+            startY: 60,
+            head: head,
+            body: body,
+            theme: 'grid'
         });
     
-        pdf.save();
+        pdf.save('home-docs.pdf');
     };
 
 
     render() {
         const { numSelected, classes, homes, selected } = this.props;
-        console.log('homesssssssssssss', homes);
 
         return (
             <Toolbar 
@@ -498,7 +539,7 @@ class HomeList extends React.Component {
             tempObj['expired'] = countExpired;
             tempArray.push(tempObj);
         });
-        console.log('tempArray', tempArray);
+
         this.setState({ dueList: tempArray });
     };
 
@@ -553,7 +594,6 @@ class HomeList extends React.Component {
     isSelected = id => this.state.selected.indexOf(id) !== -1;
 
     render() {
-        console.log('this.props', this.props);
         const { classes, homes } = this.props;
         const { dueList, order, orderBy, selected, rowsPerPage, page } = this.state;
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, homes.length - page * rowsPerPage);
@@ -600,7 +640,7 @@ class HomeList extends React.Component {
                                         <TableCell padding="checkbox">
                                             <Checkbox 
                                                 checked={isSelected}   
-                                                InputProps={{ classes: { root: classes.font, checked: classes.font } }}
+                                                inputprops={{ classes: { root: classes.font, checked: classes.font } }}
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">

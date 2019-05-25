@@ -240,26 +240,25 @@ class HomeEdit extends React.Component {
     render(){
         const { classes } = this.props;
         return (
-                <div className="ui container">
-                    <div class="ui hidden divider"></div>
-                    <h1 class="ui header">
-                        <i class="home icon"></i>
-                        <div class="content font--teal">
-                            {this.props.home.home_name}
-                            <h5 className="font--black">{`${this.props.home.primary_first_name} ${this.props.home.primary_last_name}`}{this.props.home.secondary_first_name ? ` & ${this.props.home.secondary_first_name}`  : ''}{this.props.home.secondary_last_name ? ` ${this.props.home.secondary_last_name}`  : ''}</h5>
-                        </div>
-                    </h1>
-                    <div class="ui three item menu">
-                        <a class={this.state.addClassGeneral} onClick={()=>this.toggleMenu(0)}>General Info</a>
-                        <a class={this.state.addClassPersonalDocs} onClick={()=>this.toggleMenu(1)}>Personal Docs</a>
-                        <a class={this.state.addClassHomeDocs} onClick={()=>this.toggleMenu(2)}>Home Docs</a>
+            <div className="ui container">
+                <div class="ui hidden divider"></div>
+                <h1 class="ui header">
+                    <i class="home icon"></i>
+                    <div class="content font--teal">
+                        {this.props.home.home_name}
+                        <h5 className="font--black">{`${this.props.home.primary_first_name} ${this.props.home.primary_last_name}`}{this.props.home.secondary_first_name ? ` & ${this.props.home.secondary_first_name}`  : ''}{this.props.home.secondary_last_name ? ` ${this.props.home.secondary_last_name}`  : ''}</h5>
                     </div>
-                    <div class="ui hidden divider"></div>
-                    <div class="ui very padded segment">
-                        {this.renderSection(this.state.section)}
-                    </div>
+                </h1>
+                <div class="ui three item menu">
+                    <a class={this.state.addClassGeneral} onClick={()=>this.toggleMenu(0)}>General Info</a>
+                    <a class={this.state.addClassPersonalDocs} onClick={()=>this.toggleMenu(1)}>Personal Docs</a>
+                    <a class={this.state.addClassHomeDocs} onClick={()=>this.toggleMenu(2)}>Home Docs</a>
                 </div>
-
+                <div class="ui hidden divider"></div>
+                <div class="ui very padded segment">
+                    {this.renderSection(this.state.section)}
+                </div>
+            </div>
         );
     };
 }
