@@ -1,30 +1,61 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import { Link } from 'react-router-dom';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 
 const styles = {
     root: {
-      flexGrow: 1,
-      boxShadow: 'none'
+        flexGrow: 1,
     },
     appBar: {
-        backgroundColor: '#2196f3',
-        boxShadow: 'none'
+        boxShadow: 'none',
+        display: 'flex',
     },
-    grow: {
-      flexGrow: 1,
+    toolbar: {
+        paddingLeft: '0px',
+        flexGrow: 1,
+        alignItems: 'stretch'
+    },
+    logoContainer: {
+        backgroundColor: '#1769aa',
+        maxHeight: '64px',
+        paddingLeft: '40px',
+        paddingRight: '40px',
+        display: 'flex',
+        alignItems: 'center',
+    },
+    logo: {
+        fontWeight: '600',
+        fontSize: '16px',
+        border: '2px solid #fff',
+        borderRadius: '5px',
+        padding: '3px 3px',
+        lineHeight: '18px',
+        fontFamily: 'arial',
+        '&:hover': {
+            border: '2px solid #2196f3',
+            color: '#2196f3'
+        }
     },
     menuButton: {
-      marginLeft: -12,
-      marginRight: 20,
-    },
+        borderRight: '1px solid #42a5f5',
+        borderRadius: 0,
+        width: '90px',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: '13px',
+        lineHeight: '13px',
+        padding: '0px 20px',
+        '&:hover': {
+            color: '#fff'
+        }
+    }
 };
 
 const Header = (props) => {
@@ -32,31 +63,20 @@ const Header = (props) => {
     return (
         <div className={classes.root}>
             <AppBar position="static" className={classes.appBar}>
-                <Toolbar>
+                <Toolbar className={classes.toolbar}>
                     {/* <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
                         <MenuIcon />
                     </IconButton> */}
-                    <Typography component={Link} to="/" variant="h6" color="inherit" className={classes.grow}>
-                        m*system
-                    </Typography>
-                    <Button component={Link} to="/" color="inherit">Homes List</Button>
-                    <Button component={Link} to="/homes/new" color="inherit">Create Home</Button>
+                    <div className={classes.logoContainer}>
+                        <Typography component={Link} to="/" color="inherit" className={classes.logo}>
+                            m*
+                        </Typography>
+                    </div>
+                    <Button component={Link} to="/" color="inherit" className={classes.menuButton}>Homes List</Button>
+                    <Button component={Link} to="/homes/new" color="inherit" className={classes.menuButton}>Create Home</Button>
                 </Toolbar>
             </AppBar>
         </div>
-        // <div className="ui teal top menu inverted">
-        //     <Link to="/" className="item">
-        //         M*System
-        //     </Link>
-        //     <div className="right menu">
-        //         <Link to="/" className="item">
-        //             Homes List
-        //         </Link>
-        //         <Link to="/homes/new" className="item">
-        //             New Home
-        //         </Link>
-        //     </div>
-        // </div>
     );
 };
 

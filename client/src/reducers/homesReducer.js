@@ -8,8 +8,6 @@ export default (state = {}, action) => {
     switch (action.type) {
         case FETCH_HOMES:
             return { ...state, ..._.mapKeys(action.payload, 'home_id') };
-        // case FETCH_HOME:
-        //     return { ...state, [action.payload.id]: action.payload };
         case CREATE_HOME:
             return { ...state, [action.payload.home_id]: action.payload };
         default: 
