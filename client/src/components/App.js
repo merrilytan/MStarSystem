@@ -19,7 +19,7 @@ const theme = createMuiTheme({
     typography: {
         fontFamily: [ 'Calibri' ],
         fontWeight: 500,
-        // fontSize: '12px',
+        fontSize: '12px',
         color: '#676a6c',
     },
     overrides: {

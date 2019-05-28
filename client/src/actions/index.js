@@ -4,7 +4,6 @@ import { CREATE_HOME, FETCH_HOMES, FETCH_HOME, EDIT_HOME } from './types';
 export const fetchHomes = () => {
     return async (dispatch, getState) => {
         const response = await homes.get('/homeData');
-        console.log('response', response);
         dispatch({ type: FETCH_HOMES, payload: response.data });
     };
 };  

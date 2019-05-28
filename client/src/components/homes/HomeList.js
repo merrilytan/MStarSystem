@@ -64,7 +64,6 @@ const styles = theme => ({
         width: '93%',
         marginTop: '45px',
         minHeight: 'calc(100vh - 225px)',
-        // boxShadow: 'none'
     },
     tableBody: {
         backgroundColor: 'rgba(0,0,0,.02)',
@@ -78,47 +77,13 @@ class HomeList extends React.Component {
         selected: [],
         page: 0,
         rowsPerPage: 5,
-        dueList: [],
     };
 
     componentDidMount() {
         this.props.fetchHomes();
     }
 
-    fillDueList = () => {
-        let tempArray = [];
-        this.props.homes.map((home) => {
-            let countAlmostExpired = 0;
-            let countExpired = 0;
-            let tempObj = {};
-            const homeValues = Object.entries(home);
-            homeValues.map((homeValue) => {
-                if(homeValue[0] === "home_id"){
-                    tempObj[homeValue[0]] = homeValue[1];
-                } else if(homeValue[0] === "home_name"){
-                    tempObj[homeValue[0]] = homeValue[1];
-                } else if(homeValue[0] === "primary_first_name"){
-                    tempObj[homeValue[0]] = homeValue[1];
-                } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
-                    const dt = new Date(homeValue[1]);
-                    if(!isNaN(dt.getTime())){
-                        const dateStatus = checkDate(homeValue[1]);
-                        if(dateStatus == "almost-expired"){
-                            countAlmostExpired++;
-                        } else if(dateStatus == "expired"){
-                            countExpired++;
-                        }
-                    }
-                }
-            });
-            tempObj['almost_expired'] = countAlmostExpired;
-            tempObj['expired'] = countExpired;
-            tempArray.push(tempObj);
-        });
-
-        this.setState({ dueList: tempArray });
-    };
-
+    
     renderDocStatus = (numDocs, commonClass, specificClass, status) => {
         if(numDocs === 0){
             return ('');
@@ -188,11 +153,45 @@ class HomeList extends React.Component {
 
     render() {
         const { classes, homes } = this.props;
-        const { dueList, order, orderBy, selected, rowsPerPage, page } = this.state;
+        const { order, orderBy, selected, rowsPerPage, page } = this.state;
+        let dueList = [];
         const emptyRows = rowsPerPage - Math.min(rowsPerPage, homes.length - page * rowsPerPage);
+    
+        const fillDueList = () => {
+            let tempArray = [];
+            this.props.homes.map((home) => {
+                let countAlmostExpired = 0;
+                let countExpired = 0;
+                let tempObj = {};
+                const homeValues = Object.entries(home);
+                homeValues.map((homeValue) => {
+                    if(homeValue[0] === "home_id"){
+                        tempObj[homeValue[0]] = homeValue[1];
+                    } else if(homeValue[0] === "home_name"){
+                        tempObj[homeValue[0]] = homeValue[1];
+                    } else if(homeValue[0] === "primary_first_name"){
+                        tempObj[homeValue[0]] = homeValue[1];
+                    } else if(isNaN(homeValue[1]) && homeValue[0]!="home_opened"){
+                        const dt = new Date(homeValue[1]);
+                        if(!isNaN(dt.getTime())){
+                            const dateStatus = checkDate(homeValue[1]);
+                            if(dateStatus == "almost-expired"){
+                                countAlmostExpired++;
+                            } else if(dateStatus == "expired"){
+                                countExpired++;
+                            }
+                        }
+                    }
+                });
+                tempObj['almost_expired'] = countAlmostExpired;
+                tempObj['expired'] = countExpired;
+                tempArray.push(tempObj);
+            });
+            return tempArray;
+        };
         
-        if(homes[0] && !dueList[0]){
-            this.fillDueList();
+        if(homes[0]){
+            dueList = fillDueList();
         }
             
         if(dueList[0]){
