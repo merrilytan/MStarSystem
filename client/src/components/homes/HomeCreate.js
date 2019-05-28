@@ -1,22 +1,36 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
-import { createHome } from '../../actions';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
 import Grid from '@material-ui/core/Grid';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { createHome } from '../../actions';
 
 const styles = theme => ({
+    button: {
+        margin: theme.spacing.unit,
+        boxShadow: 'none',
+        marginTop: '25px',
+        marginBottom: 0,
+        '&:hover': {
+            color: '#fff',
+        },
+        '&:focus': {
+            boxShadow: 'none'
+        }
+    },
     card: {
         minWidth: 275,
-        maxWidth: 400,
+        maxWidth: 325,
+        padding: '30px 40px',
         textAlign: 'center',
     },
-    container: {
+    flexContainer: {
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
@@ -25,48 +39,19 @@ const styles = theme => ({
         alignItems: 'center',
     },
     header: {
-        paddingTop: '30px',
-        paddingBottom: '20px',
+        paddingBottom: 15,
         textTransform: 'uppercase',
         color: '#2196f3',
+        fontSize: '18px',
         flexGrow: 1,
+        fontWeight: 'bold'
     },
     pageContainer: {
         minHeight: 'calc(100vh - 64px)'
     },
-    textField: {
-        marginTop: 0,
-        marginBottom: 20,
+    inputField: {
+        marginBottom: 10,
     },
-    grid: {
-        width: '80%',
-    },
-    // menu: {
-    //     width: 200
-    // },
-    cssOutlinedInput: {
-        // "&:not(hover):not($disabled):not($cssFocused):not($error) $notchedOutline": {
-        //   borderColor: "red" //default      
-        // },
-        // "&:hover:not($disabled):not($cssFocused):not($error) $notchedOutline": {
-        //   borderColor: "blue" //hovered
-        // },
-        "&$cssFocused $notchedOutline": {
-          borderColor: '#2196f3', //focused
-        }
-    },
-    notchedOutline: {},
-    cssLabel: {},
-    cssFocused: {
-        color: '#2196f3 !important'
-    },
-    error: {},
-    disabled: {},
-    // helper: {
-    //     "#outlined-helperText-helper-text": {
-    //         marginTop: '4px'
-    //     }
-    // }
 });
 
 class HomeCreate extends React.Component {
@@ -100,24 +85,24 @@ class HomeCreate extends React.Component {
     }
 
     //error is inside meta
-    renderInput = ({ input, label, meta, className, placeholder, required, InputLabelProps, InputProps }) => {
+    renderInput = ({ input, label, meta, className, required, InputLabelProps, InputProps }) => {
         //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         console.log('meta.error', meta);
         return (
             <TextField
                 id="outlined-helperText"
                 label={label}
-                defaultValue = {placeholder}
+                // defaultValue = {placeholder}
                 className={className}
-                fullWidth = "true"
-                margin="normal"
+                fullWidth = {true}
+                margin="dense"
                 helperText={meta.error && meta.touched ? meta.error : ''}
                 variant="outlined"
                 autoComplete= "nope"
                 InputLabelProps={InputLabelProps}
                 InputProps={InputProps}
-                required={required ? 'true' : 'false'}
-                error={meta.error && meta.touched ? 'true' : ''}
+                required={required ? true : false}
+                error={meta.error && meta.touched ? true : false}
                 {...input}
             />
         );
@@ -133,68 +118,44 @@ class HomeCreate extends React.Component {
         const { classes } = this.props;
 
         return (
-            <div className ={`${classes.container} ${classes.pageContainer}`}>
-            <Card className={classes.card}>
-                <Typography variant="h6" className={classes.header}>
-                    Create Home
-                </Typography>
-                <CardContent>
-                    {/* <div class="ui hidden divider"></div> */}
-                    {/* handleSubmit is from redux form. it automatically adds event.preventDefault */}
-                    <form onSubmit = {this.props.handleSubmit(this.onSubmit)} noValidate className={classes.container}>
-                    <Grid 
-                        container 
-                        spacing={12}
-                        className={classes.grid}
-                        alignItems='center'
-                        direction='row'
-                        justify='center'
-                        >
-                        <Grid item xs={12}>
-                            <Field 
-                                name = "home_name" 
-                                component={this.renderInput} 
-                                label="Home Name" 
-                                placeholder="Home Name" 
-                                required="required"
-                                className={classes.textField} 
-                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
-                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Field 
-                                name = "primary_first_name" 
-                                component={this.renderInput} 
-                                label="Primary First Name" 
-                                placeholder="Primary First Name" 
-                                required="required"
-                                className={classes.textField} 
-                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
-                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Field 
-                                name = "primary_last_name" 
-                                component={this.renderInput} 
-                                label="Primary Last Name" 
-                                placeholder="Primary Last Name" 
-                                required="required"
-                                className={classes.textField} 
-                                InputLabelProps={{ classes: { className: classes.cssFocused, root: classes.cssLabel, focused: classes.cssFocused } }}
-                                InputProps={{ classes: { root: classes.cssOutlinedInput, focused: classes.cssFocused, notchedOutline: classes.notchedOutline } }} 
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <button className="ui button">Submit</button>
-                            {this.renderSuccess()}
-                        </Grid>
-                    </Grid>
+            <div className ={`${classes.flexContainer} ${classes.pageContainer}`}>
+                <Card className={classes.card}>
+                    <Typography className={classes.header}>
+                        Create Home
+                    </Typography>
+                    <form onSubmit = {this.props.handleSubmit(this.onSubmit)} noValidate className={classes.flexContainer}>
+                        <Field 
+                            name = "home_name" 
+                            component={this.renderInput} 
+                            label="Home Name" 
+                            placeholder="Home Name" 
+                            required="required"
+                            className={classes.inputField}
+                        />
+                    
+                        <Field 
+                            name = "primary_first_name" 
+                            component={this.renderInput} 
+                            label="Primary First Name" 
+                            placeholder="Primary First Name" 
+                            required="required"
+                            className={classes.inputField}
+                        />
+                    
+                        <Field 
+                            name = "primary_last_name" 
+                            component={this.renderInput} 
+                            label="Primary Last Name" 
+                            placeholder="Primary Last Name" 
+                            required="required"
+                            className={classes.inputField}
+                        />
+                        <Button variant="contained" type="submit" color="primary" size="medium" className={classes.button}>
+                            Submit
+                        </Button>
+                        {this.renderSuccess()}  
                     </form>
-                </CardContent>
-                
-            </Card>
+                </Card>
             </div>
         );
     };

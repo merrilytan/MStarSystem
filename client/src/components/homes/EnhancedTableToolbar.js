@@ -21,7 +21,8 @@ const toolbarStyles = theme => ({
         borderTopLeftRadius: '3px',
         borderTopRightRadius: '3px',
         borderTop: '2px solid #e7eaec',
-        borderBottom: '1px solid #e7eaec'
+        borderBottom: '1px solid #e7eaec',
+        backgroundColor: '#fff'
     },
     spacer: {
         flex: '1 1 100%',

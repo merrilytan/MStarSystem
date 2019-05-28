@@ -10,7 +10,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
@@ -19,36 +18,23 @@ import EnhancedTableToolbar from './EnhancedTableToolbar';
 import { checkDate, getSorting, stableSort } from '../../js/functions';
 
 const styles = theme => ({
-    root: {
-        width: '93%',
-        marginTop: '45px',
-        minHeight: 'calc(100vh - 225px)',
-        boxShadow: 'none'
-    },
-    table: {
-        minWidth: 200,
-        fontFamily: 'Calibri',
-        fontSize: '14px',
-        color: '#676a6c',
-        boxShadow: 'none'
-    },
-    tableWrapper: {
-        overflowX: 'auto',
-        backgroundColor: 'rgba(0,0,0,.05)',
+    button: {
+        margin: theme.spacing.unit,
+        minWidth: '40px',
+        padding: '0px',
         boxShadow: 'none',
-        fontFamily: 'Calibri',
-        fontSize: '14px',
-        color: '#676a6c',
+        '&:hover': {
+            color: '#fff'
+        },
+        '&:focus': {
+            boxShadow: 'none'
+        }
     },
     container: {
         width: '100%',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        flexWrap: 'wrap',
-    },
-    pageContainer: {
-        minHeight: 'calc(100vh - 175px)',
     },
     due: {
         width: '25px',
@@ -68,30 +54,20 @@ const styles = theme => ({
     dueExpired: {
         backgroundColor: '#e57373',
     },
-    font: {
-    //     fontSize: '12px',
-    //     color: '#fff',
-    //     fill: '#fff'
+    pagination: {
+        backgroundColor: '#fff',
+        borderBottomLeftRadius: '3px',
+        borderBottomRightRadius: '3px',
+        color: '#676a6c'
     },
-    button: {
-        margin: theme.spacing.unit,
-        backgroundColor: '#2196f3',
-        color: '#fff'
+    root: {
+        width: '93%',
+        marginTop: '45px',
+        minHeight: 'calc(100vh - 225px)',
+        // boxShadow: 'none'
     },
-    leftIcon: {
-        marginRight: theme.spacing.unit,
-    },
-    rightIcon: {
-        marginLeft: theme.spacing.unit,
-    },
-    iconSmall: {
-        fontSize: 20,
-    },
-    row: {
-        fontFamily: 'Calibri',
-        fontSize: '14px',
-        color: '#676a6c',
-        height: '30px !important'
+    tableBody: {
+        backgroundColor: 'rgba(0,0,0,.02)',
     },
 });
 
@@ -107,44 +83,6 @@ class HomeList extends React.Component {
 
     componentDidMount() {
         this.props.fetchHomes();
-    }
-
-    almost_expired = (numDocs, classDue, classDueAlmost) => {
-        if(numDocs != 0){
-            return (
-                <Tooltip
-                    title="Almost Due"
-                    placement={'bottom-start'}
-                    enterDelay={300}
-                >
-                    <div className={`${classDue} ${classDueAlmost}`}>{numDocs}</div>
-                </Tooltip>
-            );
-        } else {
-            return ('')
-        }
-    }
-
-    blank = (classDue) => {
-        return (
-            <div className={classDue}>.</div>
-        );
-    }
-
-    expired = (numDocs, classDue, classDueExpired) => {
-        if(numDocs != 0){
-            return (
-                <Tooltip
-                    title="Overdue"
-                    placement={'bottom-start'}
-                    enterDelay={300}
-                >
-                    <div className={`${classDue} ${classDueExpired}`}>{numDocs}</div>
-                </Tooltip>
-            );  
-        } else {
-            return ('')
-        }   
     }
 
     fillDueList = () => {
@@ -181,6 +119,23 @@ class HomeList extends React.Component {
         this.setState({ dueList: tempArray });
     };
 
+    renderDocStatus = (numDocs, commonClass, specificClass, status) => {
+        if(numDocs === 0){
+            return ('');
+        } else if(status == 'almostExpired' || status == 'expired') {
+            return (
+                <Tooltip
+                    title={status == 'almostExpired' ? "Almost Due" : "Overdue"}
+                    placement={'bottom-start'}
+                    enterDelay={300}
+                >
+                    <div className={`${commonClass} ${specificClass}`}>{numDocs}</div>
+                </Tooltip>
+            );
+        } 
+    } 
+
+    //Table Pagination ------------------------------------------------------------------------
     handleRequestSort = (event, property) => {
         const orderBy = property;
         let order = 'desc';
@@ -242,15 +197,14 @@ class HomeList extends React.Component {
             
         if(dueList[0]){
             return (
-                <div className ={`${classes.container} ${classes.pageContainer}`}>
-                    <Paper className={classes.root}>
+                <div className ={classes.container}>
+                    <div className={classes.root}>
                         <EnhancedTableToolbar 
                             numSelected={selected.length} 
                             homes={homes} 
                             selected={selected}
                         />
-                        <div className={classes.tableWrapper}>
-                            <Table className={classes.table} aria-labelledby="tableTitle">
+                        <Table>
                             <EnhancedTableHead
                                 numSelected={selected.length}
                                 order={order}
@@ -259,7 +213,7 @@ class HomeList extends React.Component {
                                 onRequestSort={this.handleRequestSort}
                                 rowCount={homes.length}
                             />
-                            <TableBody className ={classes.table}>
+                            <TableBody className ={classes.tableBody}>
                                 {stableSort(dueList, getSorting(order, orderBy))
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map(n => {
@@ -273,12 +227,10 @@ class HomeList extends React.Component {
                                         tabIndex={-1}
                                         key={n.home_id}
                                         selected={isSelected}
-                                        className={classes.row}
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox 
                                                 checked={isSelected}   
-                                                inputprops={{ classes: { root: classes.font, checked: classes.font } }}
                                             />
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">
@@ -288,21 +240,15 @@ class HomeList extends React.Component {
                                             {n.primary_first_name}
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">
-                                            {this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost)}
-                                            {(!this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost) && this.expired(n.expired, classes.due, classes.dueExpired)) ? this.blank(classes.due) : ''}
-                                            {this.expired(n.expired, classes.due, classes.dueExpired)}
-                                            {(!this.almost_expired(n.almost_expired, classes.due, classes.dueAlmost) && !this.expired(n.expired, classes.due, classes.dueExpired)) ? 'Up to Date' : ''}
+                                            {this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired')}
+                                            {(!this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired') && this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')) ? <div className={classes.due}>.</div> : ''}
+                                            {this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')}
+                                            {(!this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired') && !this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')) ? 'Up to Date' : ''}
                                         </TableCell>
                                         <TableCell component="th" scope="row" padding="none">
-                                            {/* <IconButton component={Link} to={`/homes/edit/${n.home_id}`} aria-label="Edit">
-                                                <Edit />
-                                            </IconButton> */}
-                                            <Button variant="contained" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
+                                            <Button variant="contained" color="primary" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
                                                 Edit
                                             </Button>
-                                            {/* <Button variant="contained" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
-                                                Edit
-                                            </Button> */}
                                         </TableCell>
                                     </TableRow>
                                     );
@@ -313,8 +259,8 @@ class HomeList extends React.Component {
                                 </TableRow>
                                 )}
                             </TableBody>
-                            </Table>
-                        </div>
+                        </Table>
+
                         <TablePagination
                             rowsPerPageOptions={[5, 10, 25]}
                             component="div"
@@ -329,12 +275,13 @@ class HomeList extends React.Component {
                             }}
                             onChangePage={this.handleChangePage}
                             onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                            className={classes.pagination}
                         />
-                    </Paper>
+                    </div>
                 </div>
             );
         } else {
-            return ('');
+            return '';
         } 
     }
 }
