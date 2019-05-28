@@ -15,6 +15,9 @@ const theme = createMuiTheme({
     palette: {
         primary: blue,
         secondary: red,
+        background: {
+            default: '#f3f3f4',
+        },
     },
     typography: {
         fontFamily: [ 'Calibri' ],

@@ -27,6 +27,14 @@ const getSorting = (order, orderBy) => {
     return order === 'desc' ? (a, b) => desc(a, b, orderBy) : (a, b) => -desc(a, b, orderBy);
 }
 
+const isEmpty = (obj) => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
+}
+
 const stableSort = (array, cmp) => {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
@@ -46,4 +54,4 @@ const today = () => {
     return today;
 }
 
-export { checkDate, desc, getSorting, stableSort, today };
+export { checkDate, desc, getSorting, isEmpty, stableSort, today };

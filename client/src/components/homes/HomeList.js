@@ -5,14 +5,14 @@ import { fetchHomes } from '../../actions';
 import { reduxForm } from 'redux-form';
 import { Link } from 'react-router-dom'
 import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Checkbox from '@material-ui/core/Checkbox';
 import Tooltip from '@material-ui/core/Tooltip';
-import Button from '@material-ui/core/Button';
 import EnhancedTableHead from './EnhancedTableHead';
 import EnhancedTableToolbar from './EnhancedTableToolbar';
 import { checkDate, getSorting, stableSort } from '../../js/functions';
@@ -68,6 +68,9 @@ const styles = theme => ({
     tableBody: {
         backgroundColor: 'rgba(0,0,0,.02)',
     },
+    tableCell: {
+        color: '#676a6c',
+    }
 });
 
 class HomeList extends React.Component {
@@ -226,25 +229,26 @@ class HomeList extends React.Component {
                                         tabIndex={-1}
                                         key={n.home_id}
                                         selected={isSelected}
+                                        classes={{ root: classes.tableRow }}
                                     >
                                         <TableCell padding="checkbox">
                                             <Checkbox 
                                                 checked={isSelected}   
                                             />
                                         </TableCell>
-                                        <TableCell component="th" scope="row" padding="none">
+                                        <TableCell component="th" scope="row" padding="none" className={classes.tableCell}>
                                             {n.home_name}
                                         </TableCell>
-                                        <TableCell component="th" scope="row" padding="none">
+                                        <TableCell component="th" scope="row" padding="none" className={classes.tableCell}>
                                             {n.primary_first_name}
                                         </TableCell>
-                                        <TableCell component="th" scope="row" padding="none">
+                                        <TableCell component="th" scope="row" padding="none" className={classes.tableCell}>
                                             {this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired')}
                                             {(!this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired') && this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')) ? <div className={classes.due}>.</div> : ''}
                                             {this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')}
                                             {(!this.renderDocStatus(n.almost_expired, classes.due, classes.dueAlmost, 'almostExpired') && !this.renderDocStatus(n.expired, classes.due, classes.dueExpired, 'expired')) ? 'Up to Date' : ''}
                                         </TableCell>
-                                        <TableCell component="th" scope="row" padding="none">
+                                        <TableCell component="th" scope="row" padding="none" className={classes.tableCell}> 
                                             <Button variant="contained" color="primary" size="small" className={classes.button} component={Link} to={`/homes/edit/${n.home_id}`}>
                                                 Edit
                                             </Button>

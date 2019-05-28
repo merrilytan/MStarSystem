@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent'
-import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { createHome } from '../../actions';
@@ -24,12 +22,6 @@ const styles = theme => ({
             boxShadow: 'none'
         }
     },
-    card: {
-        minWidth: 275,
-        maxWidth: 325,
-        padding: '30px 40px',
-        textAlign: 'center',
-    },
     flexContainer: {
         width: '100%',
         display: 'flex',
@@ -46,11 +38,17 @@ const styles = theme => ({
         flexGrow: 1,
         fontWeight: 'bold'
     },
+    inputField: {
+        marginBottom: 10,
+    },
     pageContainer: {
         minHeight: 'calc(100vh - 64px)'
     },
-    inputField: {
-        marginBottom: 10,
+    paper: {
+        minWidth: 275,
+        maxWidth: 325,
+        padding: '30px 40px',
+        textAlign: 'center',
     },
 });
 
@@ -64,16 +62,6 @@ class HomeCreate extends React.Component {
         });
     };
 
-    // renderError({ error, touched }){
-    //     if(touched && error) {
-    //         return (
-    //             <div className="ui error message">
-    //                 <div className="header">{error}</div>
-    //             </div>
-    //         );
-    //     }
-    // }
-
     renderSuccess(){
         if(this.state.success) {
             return (
@@ -85,7 +73,7 @@ class HomeCreate extends React.Component {
     }
 
     //error is inside meta
-    renderInput = ({ input, label, meta, className, required, InputLabelProps, InputProps }) => {
+    renderInput = ({ input, label, meta, className, required }) => {
         //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         console.log('meta.error', meta);
         return (
@@ -99,8 +87,6 @@ class HomeCreate extends React.Component {
                 helperText={meta.error && meta.touched ? meta.error : ''}
                 variant="outlined"
                 autoComplete= "nope"
-                InputLabelProps={InputLabelProps}
-                InputProps={InputProps}
                 required={required ? true : false}
                 error={meta.error && meta.touched ? true : false}
                 {...input}
@@ -119,7 +105,7 @@ class HomeCreate extends React.Component {
 
         return (
             <div className ={`${classes.flexContainer} ${classes.pageContainer}`}>
-                <Card className={classes.card}>
+                <Paper className={classes.paper}>
                     <Typography className={classes.header}>
                         Create Home
                     </Typography>
@@ -155,7 +141,7 @@ class HomeCreate extends React.Component {
                         </Button>
                         {this.renderSuccess()}  
                     </form>
-                </Card>
+                </Paper>
             </div>
         );
     };

@@ -18,6 +18,7 @@ const rows = [
 const headerStyles = theme => ({
     tableHead: {
         backgroundColor: '#fff',
+        height: '0px !important',
     }, 
     tableHeadLabel: {
         fontWeight: 'bold',
