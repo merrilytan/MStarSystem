@@ -7,21 +7,70 @@ import { editHome } from '../../actions';
 import { checkDate, isEmpty } from '../../js/functions';
 import diff from 'object-diff';
 import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
     contentArea: {
         width: '100%',
-        padding: '30px 80px',
-        backgroundColor: '#fff'
+        display: 'flex',
+        justifyContent: 'center',
+        backgroundColor: '#f3f3f4'
     },
     form: {
-        // border: '1px solid #e1e4e8', 
+        width: '70%',
+        marginTop: '50px',
+        maxWidth: '765px',
+    },
+    formSectionContent: {
+        padding: '4% 5%',
+    },
+    formSectionHeader: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0% 5%',
+        height: '40px',
+        backgroundColor: '#ddd'
+    },
+    formSection: {
         borderRadius: '4px',
-        padding: '20px',
+        border: '1px solid #ddd',
+        marginBottom: '20px',
+        // borderTop: '40px solid #ddd',
+        backgroundColor: '#fff'
+    },
+    header: {
+        color: '#2196f3',
+        display: 'inline-block',
+        fontSize: '16px',
+        flexGrow: '1',
+        fontWeight: 'bold',
+        // marginTop: '-58px',
+        position: 'absolute',
+        backgroundColor: '#f3f3f4',
+        //backgroundColor: '#fff',
+        paddingRight: '10px',
+        textTransform: 'uppercase',
+        backgroundColor: '#ddd',
+        lineHeight: '16px',
     },
     inputField: {
         marginBottom: '20px',
+        width: '48%',
     },
+    line: {
+        height: '1px',
+        border: '0',
+        margin: '1em 0',
+        display: 'block',
+        padding: '0',
+        borderTop: '1px solid #2196f3',
+        marginBottom: '35px',
+    },
+    twoFields: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    }
 });
 
 class HomeEditContent extends React.Component {
@@ -100,25 +149,39 @@ class HomeEditContent extends React.Component {
         if(selection === '0'){
             return (
                 <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={this.props.classes.form}>
-                    <div className="two fields">
-                        <Field name="primary_first_name" component={this.renderInput} label="First Name" placeholder="Primary First Name" required="required" />
-                        <Field name="primary_last_name" component={this.renderInput} label="Last Name" placeholder="Primary Last Name" required="required"/>
-                    </div>   
-                    <div className="two fields">
-                        <Field name="primary_cell" component={this.renderInput} label="Cell Phone" placeholder="Primary Cell Phone" />
-                        <Field name="primary_email" component={this.renderInput} label="Email" placeholder="Primary Email" />
-                    </div> 
-                    <h4 className="ui horizontal divider section header teal">
-                        Secondary
-                    </h4>
-                    <div className="two fields">
-                        <Field name="secondary_first_name" component={this.renderInput} label="First Name" placeholder="Secondary First Name" />
-                        <Field name="secondary_last_name" component={this.renderInput} label="Last Name" placeholder="Secondary Last Name" />
-                    </div>   
-                    <div className="two fields">
-                        <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" placeholder="Secondary Cell Phone" />
-                        <Field name="secondary_email" component={this.renderInput} label="Email" placeholder="Secondary Email" />
+                    <div className={this.props.classes.formSection}>
+                        {/* <hr className={this.props.classes.line}></hr> */}
+                        <div className={this.props.classes.formSectionHeader}>
+                            <Typography className={this.props.classes.header}>
+                                Primary
+                            </Typography>
+                        </div>
+                        <div className={this.props.classes.formSectionContent}>
+                            <div className={this.props.classes.twoFields}>
+                                <Field name="primary_first_name" component={this.renderInput} label="First Name" placeholder="Primary First Name" required="required" />
+                                <Field name="primary_last_name" component={this.renderInput} label="Last Name" placeholder="Primary Last Name" required="required"/>
+                            </div>   
+                            <div className={this.props.classes.twoFields}>
+                                <Field name="primary_cell" component={this.renderInput} label="Cell Phone" placeholder="Primary Cell Phone" />
+                                <Field name="primary_email" component={this.renderInput} label="Email" placeholder="Primary Email" />
+                            </div> 
+                        </div>
+                    </div>
+                    <div className={this.props.classes.formSection}>
+                        <hr className={this.props.classes.line}></hr>
+                        <Typography className={this.props.classes.header}>
+                            Secondary
+                        </Typography>
+                        <div className={this.props.classes.twoFields}>
+                            <Field name="secondary_first_name" component={this.renderInput} label="First Name" placeholder="Secondary First Name" />
+                            <Field name="secondary_last_name" component={this.renderInput} label="Last Name" placeholder="Secondary Last Name" />
+                        </div>   
+                        <div className={this.props.classes.twoFields}>
+                            <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" placeholder="Secondary Cell Phone" />
+                            <Field name="secondary_email" component={this.renderInput} label="Email" placeholder="Secondary Email" />
+                        </div>
                     </div>  
+
                     <div className="ui hidden divider"></div>
                     <h4 className="ui horizontal divider section header teal">
                         Address

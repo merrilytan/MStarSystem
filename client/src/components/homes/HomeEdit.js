@@ -53,6 +53,7 @@ const styles = theme => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        backgroundColor: '#fff'
     },
     subMenu: {
         flexGrow: '1',
@@ -60,7 +61,7 @@ const styles = theme => ({
         borderTop: '1px solid #e1e4e8',
         borderBottom: '1px solid #e1e4e8',
         borderRadius: 'none',
-        backgroundColor: '#f3f3f4'
+        backgroundColor: '#fff'
     },
     subMenuContainer: {
         width: '100%',
