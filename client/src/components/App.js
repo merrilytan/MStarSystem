@@ -30,6 +30,54 @@ const theme = createMuiTheme({
             tooltip: {
                 fontSize: '11px',
             }
+        },
+        MuiInputLabel: {
+            root: {
+                backgroundColor: '#fff',
+                '&$error' : {
+                    color: '#e57373',
+                    backgroundColor: '#ffe8e6',
+                },
+            },
+        },
+        MuiOutlinedInput: {
+            root: {
+                position: 'relative',
+                '& $notchedOutline': {
+                    borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
+                    borderColor: '#2196f3',
+                    // Reset on touch devices, it doesn't add specificity
+                    '@media (hover: none)': {
+                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                    },
+                },
+                '&$focused $notchedOutline': {
+                    borderColor: '#2196f3',
+                    borderWidth: 1,
+                },
+                '&$error $notchedOutline': {
+                    borderColor: '#e57373',
+                    backgroundColor: '#ffe8e6',
+                },
+            },
+        },
+        MuiFormHelperText: {
+            root: {
+                fontSize: '12px',
+                '&$error' : {
+                    color: '#fff',
+                    backgroundColor: '#e57373',
+                    border: '1px solid #e57373',
+                    margin: '-5px 0px 10px 0px',
+                    zIndex: '5',
+                    color: '#fff',
+                    padding: '3px 15px',
+                    borderBottomLeftRadius: '4px',
+                    borderBottomRightRadius: '4px',
+                },
+            },
         }
     }
 });

@@ -11,7 +11,6 @@ import { createHome } from '../../actions';
 
 const styles = theme => ({
     button: {
-        margin: theme.spacing.unit,
         boxShadow: 'none',
         marginTop: '25px',
         marginBottom: 0,
@@ -50,6 +49,61 @@ const styles = theme => ({
         padding: '30px 40px',
         textAlign: 'center',
     },
+    // root: {
+    //     // color: '#000',
+    //     // '&$error': {
+    //     //   color: "#000",
+    //     // }
+    // },
+    // asterisk: {
+    //     '&$error': {
+    //         color: "#d72828"
+    //     }
+    // },
+    // underline: {
+    //     '&$error:after': {
+    //         borderBottomColor: "green",
+    //     }
+    // },
+    // rootInput: {
+    //     color: '#000',
+    //     borderColor: '#000',
+    // },
+    // errorInput: {
+    //     color: '#000',
+    //     borderColor: '#000',
+    // },
+    // notchedOutlineInput: {
+    //     borderColor: 'green',
+    // }
+
+
+
+    // rootHelper: {
+    //     color: "#d72828",
+    //     fontSize: '11px',
+    //     marginTop: '3px'
+    // },
+    // errorInput: {
+    //     color: '#000',
+    //     borderColor: '#000',
+    // },
+
+
+
+
+
+    // root: {
+    //     '&$error': {
+    //       color: '#000'
+    //     }
+    // },
+    // error: {
+    //     // '&$error': {
+    //       fontSize: '10px',
+    //       marginTop: '3px'
+    //     // }
+    // },
 });
 
 class HomeCreate extends React.Component {
@@ -72,7 +126,6 @@ class HomeCreate extends React.Component {
         }
     }
 
-    //error is inside meta
     renderInput = ({ input, label, meta, className, required }) => {
         //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         console.log('meta.error', meta);
@@ -80,7 +133,6 @@ class HomeCreate extends React.Component {
             <TextField
                 id="outlined-helperText"
                 label={label}
-                // defaultValue = {placeholder}
                 className={className}
                 fullWidth = {true}
                 margin="dense"
@@ -89,6 +141,28 @@ class HomeCreate extends React.Component {
                 autoComplete= "nope"
                 required={required ? true : false}
                 error={meta.error && meta.touched ? true : false}
+                // InputProps={{
+                //     classes: {
+                //       root: this.props.classes.rootInput,
+                //       error: this.props.classes.errorInput,
+                //       underline: this.props.classes.underlineInput,
+                //       notchedOutline: this.props.classes.notchedOutlineInput
+                //     }
+                // }}
+                // InputLabelProps={{
+                //     FormLabelClasses: {
+                //       root: this.props.classes.rootLabel,
+                //       asterisk: this.props.classes.asterisk,
+                //       error: this.props.classes.errorLabel
+                //     }
+                // }}
+                // FormHelperTextProps={{
+                //     classes: {
+                //       root: this.props.classes.rootHelper,
+                //       error: this.props.classes.errorHelper
+                //     }
+                // }}
+                // OutlinedInputProps=
                 {...input}
             />
         );

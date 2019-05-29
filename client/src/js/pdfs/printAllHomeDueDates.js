@@ -94,7 +94,7 @@ const printAllHomeDueDates = (homes, selected) => {
 
     //Create jsPDF and configure --------------------------------------------------------------------------------------------------------
     const pdf = new jsPDF('p', 'pt');
-    const text = `Home Docs (Almost Due/Overdue) - ${today()}`;
+    const text = `Home Docs (Almost Due/Overdue as of ${today()})`;
     let head = headRows();
     head[0]['row_info'] = {content: text, colSpan: 5, styles: {fillColor: [33, 150, 243]}};
     

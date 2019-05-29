@@ -8,8 +8,19 @@ import { checkDate, isEmpty } from '../../js/functions';
 import diff from 'object-diff';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
+    button: {
+        boxShadow: 'none',
+        marginBottom: 0,
+        '&:hover': {
+            color: '#fff',
+        },
+        '&:focus': {
+            boxShadow: 'none'
+        }
+    },
     contentArea: {
         width: '100%',
         display: 'flex',
@@ -17,60 +28,76 @@ const styles = theme => ({
         backgroundColor: '#f3f3f4'
     },
     form: {
-        width: '70%',
+        width: '80%',
         marginTop: '50px',
-        maxWidth: '765px',
-    },
-    formSectionContent: {
-        padding: '4% 5%',
+        marginBottom: '50px',
+        maxWidth: '650px',
     },
     formSectionHeader: {
         display: 'flex',
         alignItems: 'center',
-        padding: '0% 5%',
-        height: '40px',
-        backgroundColor: '#ddd'
+        height: '30px',
+        marginBottom: '30px'
     },
     formSection: {
-        borderRadius: '4px',
-        border: '1px solid #ddd',
         marginBottom: '20px',
-        // borderTop: '40px solid #ddd',
-        backgroundColor: '#fff'
     },
     header: {
-        color: '#2196f3',
+        color: '#fff',
         display: 'inline-block',
         fontSize: '16px',
         flexGrow: '1',
         fontWeight: 'bold',
-        // marginTop: '-58px',
         position: 'absolute',
-        backgroundColor: '#f3f3f4',
-        //backgroundColor: '#fff',
         paddingRight: '10px',
         textTransform: 'uppercase',
-        backgroundColor: '#ddd',
         lineHeight: '16px',
+        position: 'absolute',
+        color: '#2196f3',
+        backgroundColor: '#f3f3f4'
     },
-    inputField: {
+    inputThreeFields: {
         marginBottom: '20px',
-        width: '48%',
+        width: '32%',
+    },
+    inputTwoFields: {
+        marginBottom: '20px',
+        width: '49%',
     },
     line: {
-        height: '1px',
+        width: '100%',
         border: '0',
         margin: '1em 0',
         display: 'block',
         padding: '0',
         borderTop: '1px solid #2196f3',
-        marginBottom: '35px',
+    },
+    threeFields: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flexWrap: 'nowrap',
     },
     twoFields: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between'
-    }
+        justifyContent: 'space-between',
+        flexWrap: 'nowrap',
+    },
+    '@media (max-width: 449px)': {
+        inputThreeFields: {
+          width: '100%',
+        },
+        inputTwoFields: {
+            width: '100%',
+        },
+        twoFields: {
+            flexWrap: 'wrap',
+        },
+        threeFields: {
+            flexWrap: 'wrap',
+        },
+    },
 });
 
 class HomeEditContent extends React.Component {
@@ -84,18 +111,6 @@ class HomeEditContent extends React.Component {
             );
         }
     }
-
-    // renderInput = ({ input, label, meta, placeholder, required }) => {
-    //     const className = `field ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
-
-    //     return (
-    //         <div className={className}>
-    //             <label>{label}</label>
-    //             <input {...input} autoComplete="off" placeholder={placeholder} />
-    //             {this.renderError(meta)}
-    //         </div>
-    //     );
-    // };
 
     renderDatePicker = ({ input, label, meta, placeholder }) => {
         
@@ -116,15 +131,14 @@ class HomeEditContent extends React.Component {
         );
     };
 
-    renderInput = ({ input, label, meta, required }) => {
+    renderInput = ({ input, label, meta, required, className }) => {
         //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         console.log('meta.error', meta);
         return (
             <TextField
                 id="outlined-helperText"
                 label={label}
-                // defaultValue = {placeholder}
-                className={this.props.classes.inputField}
+                className={className}
                 fullWidth = {true}
                 margin="dense"
                 helperText={meta.error && meta.touched ? meta.error : ''}
@@ -146,68 +160,74 @@ class HomeEditContent extends React.Component {
     };
 
     renderSection = (selection) => {
+        const { classes } = this.props;   
+
         if(selection === '0'){
             return (
-                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={this.props.classes.form}>
-                    <div className={this.props.classes.formSection}>
-                        {/* <hr className={this.props.classes.line}></hr> */}
-                        <div className={this.props.classes.formSectionHeader}>
-                            <Typography className={this.props.classes.header}>
+                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={classes.form}>
+
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Home
+                            </Typography>
+                        </div>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.twoFields}>
+                                <Field name="street_address" component={this.renderInput} label="Street Address" placeholder="Street Address" className={classes.inputTwoFields} />
+                                <Field name="apt_no" component={this.renderInput} label="Apt #" placeholder="Apt #" className={classes.inputTwoFields} />
+                            </div>   
+                            <div className={classes.threeFields}>
+                                <Field name="city" component={this.renderInput} label="City" placeholder="City" className={classes.inputThreeFields} />
+                                <Field name="postal_code" component={this.renderInput} label="Postal Code" placeholder="Postal Code" className={classes.inputThreeFields} />
+                                <Field name="home_phone" component={this.renderInput} label="Home Phone" placeholder="Home Phone" className={classes.inputThreeFields} />
+                            </div> 
+                            <div className={classes.twoFields}>
+                                <Field name="home_opened" component={this.renderInput} label="Date Home Opened" placeholder="Date Home Opened" className={classes.inputTwoFields} />
+                                <Field name="home_name" component={this.renderInput} label="Home Name" placeholder="Home Name" className={classes.inputTwoFields} />
+                            </div>   
+                        </div>
+                    </div>
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
                                 Primary
                             </Typography>
                         </div>
-                        <div className={this.props.classes.formSectionContent}>
-                            <div className={this.props.classes.twoFields}>
-                                <Field name="primary_first_name" component={this.renderInput} label="First Name" placeholder="Primary First Name" required="required" />
-                                <Field name="primary_last_name" component={this.renderInput} label="Last Name" placeholder="Primary Last Name" required="required"/>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.twoFields}>
+                                <Field name="primary_first_name" component={this.renderInput} label="First Name" placeholder="Primary First Name" required="required" className={classes.inputTwoFields} />
+                                <Field name="primary_last_name" component={this.renderInput} label="Last Name" placeholder="Primary Last Name" required="required" className={classes.inputTwoFields} />
                             </div>   
-                            <div className={this.props.classes.twoFields}>
-                                <Field name="primary_cell" component={this.renderInput} label="Cell Phone" placeholder="Primary Cell Phone" />
-                                <Field name="primary_email" component={this.renderInput} label="Email" placeholder="Primary Email" />
+                            <div className={classes.twoFields}>
+                                <Field name="primary_cell" component={this.renderInput} label="Cell Phone" placeholder="Primary Cell Phone" className={classes.inputTwoFields} />
+                                <Field name="primary_email" component={this.renderInput} label="Email" placeholder="Primary Email" className={classes.inputTwoFields} />
                             </div> 
                         </div>
                     </div>
-                    <div className={this.props.classes.formSection}>
-                        <hr className={this.props.classes.line}></hr>
-                        <Typography className={this.props.classes.header}>
-                            Secondary
-                        </Typography>
-                        <div className={this.props.classes.twoFields}>
-                            <Field name="secondary_first_name" component={this.renderInput} label="First Name" placeholder="Secondary First Name" />
-                            <Field name="secondary_last_name" component={this.renderInput} label="Last Name" placeholder="Secondary Last Name" />
-                        </div>   
-                        <div className={this.props.classes.twoFields}>
-                            <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" placeholder="Secondary Cell Phone" />
-                            <Field name="secondary_email" component={this.renderInput} label="Email" placeholder="Secondary Email" />
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Secondary
+                            </Typography>
                         </div>
-                    </div>  
-
-                    <div className="ui hidden divider"></div>
-                    <h4 className="ui horizontal divider section header teal">
-                        Address
-                    </h4>
-                    <div className="two fields">
-                        <div className="twelve wide field">
-                            <Field name="street_address" component={this.renderInput} label="Street Address" placeholder="Street Address" />
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.twoFields}>
+                                <Field name="secondary_first_name" component={this.renderInput} label="First Name" placeholder="First Name" className={classes.inputTwoFields} />
+                                <Field name="secondary_last_name" component={this.renderInput} label="Last Name" placeholder="Last Name" className={classes.inputTwoFields} />
+                            </div>   
+                            <div className={classes.twoFields}>
+                                <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" placeholder="Cell Phone" className={classes.inputTwoFields} />
+                                <Field name="secondary_email" component={this.renderInput} label="Email" placeholder="Email" className={classes.inputTwoFields} />
+                            </div> 
                         </div>
-                        <div className="four wide field">
-                            <Field name="apt_no" component={this.renderInput} label="Apt #" placeholder="Apt #" />
-                        </div>    
-                    </div>  
-                    <div className="three fields">
-                        <Field name="city" component={this.renderInput} label="City" placeholder="City" />
-                        <Field name="postal_code" component={this.renderInput} label="Postal Code" placeholder="Postal Code" />
-                        <Field name="home_phone" component={this.renderInput} label="Home Phone" placeholder="Home Phone" />
-                    </div>
-                    <div className="ui hidden divider"></div>
-                    <h4 className="ui horizontal divider section header teal">
-                        Home Info
-                    </h4> 
-                    <div className="two fields">
-                        <Field name="home_opened" component={this.renderDatePicker} label="Date Home Opened" placeholder="Date Home Opened" />
-                        <Field name="home_name" component={this.renderInput} label="Home Name" placeholder="Home Name" />
-                    </div>                        
-                    <div className="field"><button className="ui button">Submit Changes</button></div>
+                    </div>          
+                    <Button variant="contained" type="submit" color="primary" size="medium" className={classes.button}>
+                        Save Changes
+                    </Button>          
                 </form>
             );
         } else if(selection === '1'){
@@ -269,7 +289,7 @@ class HomeEditContent extends React.Component {
 
     render() {
         const { classes, selection, home } = this.props;   
-        console.log('this.props', this.props);
+
         return (
             <div className = {classes.contentArea}>
                 {this.renderSection(selection)}
@@ -281,12 +301,12 @@ class HomeEditContent extends React.Component {
 const validate = (formValues) => {
     const errors = {};
 
-    if(!formValues.primaryFirstName) {
-        errors.primaryFirstName = 'You must enter the primary\'s first name';
+    if(!formValues.primary_first_name) {
+        errors.primary_first_name = 'You must enter the primary\'s first name';
     }
 
-    if(!formValues.primaryLastName) {
-        errors.primaryLastName = 'You must enter the primary\'s last name';
+    if(!formValues.primary_last_name) {
+        errors.primary_last_name = 'You must enter the primary\'s last name';
     }
 
     return errors;
@@ -317,7 +337,7 @@ HomeEditContent.propTypes = {
 
 const formWrapped = reduxForm({ 
     form: 'homeEdit', 
-    enableReinitialize : true,
+    // enableReinitialize : true,
     touchOnBlur : false, 
     validate: validate
 })(HomeEditContent);
