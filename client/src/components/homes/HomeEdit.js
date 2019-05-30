@@ -3,7 +3,6 @@ import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import HomeIcon from '@material-ui/icons/HomeRounded';
 import Typography from '@material-ui/core/Typography';
@@ -67,7 +66,8 @@ const styles = theme => ({
         width: '100%',
     },
     tab: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontSize: '14px'
     },
 
 
@@ -319,7 +319,7 @@ class HomeEdit extends React.Component {
                     <HomeIcon className={classes.headerHomeIcon} />
                     <div className={classes.headerHomeTitle}>
                         <Typography color="primary" className={classes.headerHomeName}>{home.home_name}</Typography>
-                        <Typography className={classes.headerPeopleName}>{`${home.primary_first_name} ${home.primary_last_name}`}{this.props.home.secondary_first_name ? ` & ${this.props.home.secondary_first_name}`  : ''}{this.props.home.secondary_last_name ? ` ${this.props.home.secondary_last_name}`  : ''}</Typography>
+                        <Typography className={classes.headerPeopleName}>{`${home.primary_first_name} ${this.props.home.primary_last_name != this.props.home.home_name ? home.primary_last_name : ''}`}{this.props.home.secondary_first_name ? ` & ${this.props.home.secondary_first_name}`  : ''}{this.props.home.secondary_last_name && this.props.home.secondary_last_name != this.props.home.home_name ? ` ${this.props.home.secondary_last_name}`  : ''}</Typography>
                     </div>
                 </div>
                 <div className={classes.subMenuContainer}>

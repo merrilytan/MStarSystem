@@ -49,61 +49,15 @@ const styles = theme => ({
         padding: '30px 40px',
         textAlign: 'center',
     },
-    // root: {
-    //     // color: '#000',
-    //     // '&$error': {
-    //     //   color: "#000",
-    //     // }
-    // },
-    // asterisk: {
-    //     '&$error': {
-    //         color: "#d72828"
-    //     }
-    // },
-    // underline: {
-    //     '&$error:after': {
-    //         borderBottomColor: "green",
-    //     }
-    // },
-    // rootInput: {
-    //     color: '#000',
-    //     borderColor: '#000',
-    // },
-    // errorInput: {
-    //     color: '#000',
-    //     borderColor: '#000',
-    // },
-    // notchedOutlineInput: {
-    //     borderColor: 'green',
-    // }
 
-
-
-    // rootHelper: {
-    //     color: "#d72828",
-    //     fontSize: '11px',
-    //     marginTop: '3px'
-    // },
-    // errorInput: {
-    //     color: '#000',
-    //     borderColor: '#000',
-    // },
-
-
-
-
-
-    // root: {
-    //     '&$error': {
-    //       color: '#000'
-    //     }
-    // },
-    // error: {
-    //     // '&$error': {
-    //       fontSize: '10px',
-    //       marginTop: '3px'
-    //     // }
-    // },
+    label: {
+        // backgroundColor: '#fff',
+        zIndex: '1000',
+        minWidth: '80px',
+    },
+    shrink: {
+        backgroundColor: '#fff'
+    },
 });
 
 class HomeCreate extends React.Component {
@@ -141,28 +95,13 @@ class HomeCreate extends React.Component {
                 autoComplete= "nope"
                 required={required ? true : false}
                 error={meta.error && meta.touched ? true : false}
-                // InputProps={{
-                //     classes: {
-                //       root: this.props.classes.rootInput,
-                //       error: this.props.classes.errorInput,
-                //       underline: this.props.classes.underlineInput,
-                //       notchedOutline: this.props.classes.notchedOutlineInput
-                //     }
-                // }}
-                // InputLabelProps={{
-                //     FormLabelClasses: {
-                //       root: this.props.classes.rootLabel,
-                //       asterisk: this.props.classes.asterisk,
-                //       error: this.props.classes.errorLabel
-                //     }
-                // }}
-                // FormHelperTextProps={{
-                //     classes: {
-                //       root: this.props.classes.rootHelper,
-                //       error: this.props.classes.errorHelper
-                //     }
-                // }}
-                // OutlinedInputProps=
+                InputLabelProps={{
+                    classes: {
+                      root: this.props.classes.label,
+                      error: this.props.classes.error,
+                      shrink: this.props.classes.shrink,
+                    }
+                }}
                 {...input}
             />
         );

@@ -21,8 +21,10 @@ const styles = theme => ({
     button: {
         margin: theme.spacing.unit,
         minWidth: '40px',
-        padding: '0px',
+        // padding: '0px',
         boxShadow: 'none',
+        height: '25px',
+        fontSize: '13px',
         '&:hover': {
             color: '#fff'
         },
@@ -39,17 +41,17 @@ const styles = theme => ({
     due: {
         width: '25px',
         height: '25px',
+        fontSize: '13px',
         borderRadius: '3px',
         display: 'inline-block',
         marginRight: '5px',
-        fontWeight: 'bold',
         lineHeight: '25px',
         textAlign: 'center',
         color: '#fff',
         cursor: 'default'
     },
     dueAlmost: {
-        backgroundColor: '#ffd54f',
+        backgroundColor: '#ffc34d',
     }, 
     dueExpired: {
         backgroundColor: '#e57373',

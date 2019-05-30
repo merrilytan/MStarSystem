@@ -31,53 +31,77 @@ const theme = createMuiTheme({
                 fontSize: '11px',
             }
         },
+        MuiIconButton: {
+            root: {
+                fontSize: '24px',
+            }
+        },
         MuiInputLabel: {
             root: {
-                backgroundColor: '#fff',
-                '&$error' : {
-                    color: '#e57373',
-                    backgroundColor: '#ffe8e6',
+                color: '#aaa',
+                '&$focused': {
+                    minWidth: 'auto'
                 },
-            },
+                '&$error': {
+                    color: 'rgba(0, 0, 0, 0.45)',
+                    backgroundColor: 'transparent'
+                },
+                '&$shrink': {
+                    minWidth: 'auto',
+                    fontSize: '16px',
+                },
+            }
         },
         MuiOutlinedInput: {
             root: {
-                position: 'relative',
                 '& $notchedOutline': {
                     borderColor: 'rgba(0, 0, 0, 0.23)',
                 },
                 '&:hover:not($disabled):not($focused):not($error) $notchedOutline': {
-                    borderColor: '#2196f3',
+                    borderColor: 'rgba(0, 0, 0, 0.45)',
                     // Reset on touch devices, it doesn't add specificity
                     '@media (hover: none)': {
-                        borderColor: 'rgba(0, 0, 0, 0.23)',
+                        borderColor: 'rgba(0, 0, 0, 0.45)',
                     },
                 },
                 '&$focused $notchedOutline': {
-                    borderColor: '#2196f3',
+                    borderColor: 'rgba(0, 0, 0, 0.45)',
                     borderWidth: 1,
                 },
                 '&$error $notchedOutline': {
-                    borderColor: '#e57373',
+                    borderColor: 'rgba(0, 0, 0, 0.23)',
                     backgroundColor: '#ffe8e6',
                 },
             },
         },
         MuiFormHelperText: {
             root: {
-                fontSize: '12px',
                 '&$error' : {
                     color: '#fff',
                     backgroundColor: '#e57373',
                     border: '1px solid #e57373',
-                    margin: '-5px 0px 10px 0px',
+                    margin: '-5px 0px 0px 0px',
                     zIndex: '5',
                     color: '#fff',
                     padding: '3px 15px',
                     borderBottomLeftRadius: '4px',
                     borderBottomRightRadius: '4px',
+                    fontSize: '12px',
                 },
             },
+        },
+        MuiTableCell: {
+            paddingCheckbox: {
+                '@media (min-width: 600px)': {
+                    width: '110px',
+                    paddingLeft: '12px'
+                }
+            },
+        },
+        MuiSelect: {
+            icon: {
+                fontSize: '20px'
+            }
         }
     }
 });

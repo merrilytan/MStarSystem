@@ -2,13 +2,13 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { editHome } from '../../actions';
-import { checkDate, isEmpty } from '../../js/functions';
 import diff from 'object-diff';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { editHome } from '../../actions';
+import { checkDate, isEmpty } from '../../js/functions';
 
 const styles = theme => ({
     button: {
@@ -84,7 +84,7 @@ const styles = theme => ({
         justifyContent: 'space-between',
         flexWrap: 'nowrap',
     },
-    '@media (max-width: 449px)': {
+    '@media (max-width: 500px)': {
         inputThreeFields: {
           width: '100%',
         },
@@ -98,42 +98,128 @@ const styles = theme => ({
             flexWrap: 'wrap',
         },
     },
+
+
+    helperOrange: {
+        color: '#fff',
+        backgroundColor: '#ffc34d',
+        border: '1px solid #ffc34d',
+        margin: '-5px 0px 0px 0px',
+        zIndex: '5',
+        color: '#fff',
+        padding: '3px 15px',
+        borderBottomLeftRadius: '4px',
+        borderBottomRightRadius: '4px',
+        fontSize: '12px',
+    },
+    helperRed: {
+        color: '#fff',
+        backgroundColor: '#e57373',
+        border: '1px solid #e57373',
+        margin: '-5px 0px 0px 0px',
+        zIndex: '5',
+        color: '#fff',
+        padding: '3px 15px',
+        borderBottomLeftRadius: '4px',
+        borderBottomRightRadius: '4px',
+        fontSize: '12px',
+    },
+    label: {
+        backgroundColor: '#f3f3f4',
+        zIndex: '1000',
+        minWidth: '80px',
+    },
+    shrink: {
+        backgroundColor: '#f3f3f4'
+    },
+    inputOrange: {
+        backgroundColor: '#ffeecc',
+    },
+    inputRed: {
+        backgroundColor: '#ffe8e6',
+    },
 });
 
 class HomeEditContent extends React.Component {
 
-    renderError({ error, touched }){
-        if(touched && error) {
-            return (
-                <div className="ui error message">
-                    <div className="header">{error}</div>
-                </div>
-            );
-        }
-    }
+    // renderError({ error, touched }){
+    //     if(touched && error) {
+    //         return (
+    //             <div className="ui error message">
+    //                 <div className="header">{error}</div>
+    //             </div>
+    //         );
+    //     }
+    // }
 
-    renderDatePicker = ({ input, label, meta, placeholder }) => {
+    renderDatePicker = ({ input, label, meta, required, className }) => {
         
         let dateStatus = '';
         if(input.value && label != "Date Home Opened") {
             dateStatus = checkDate(input.value);
         }
+        console.log('dateStatus', dateStatus);
 
-        const className = `field ${meta.error && meta.touched ? 'error' : ''}`;
-        const classNameInput = `${dateStatus == "expired" ? "expired" : ""} ${dateStatus == "almost-expired" ? "almost-expired" : ""}`;
+        let helperText = '';
+        let helperClass = {};
+        let inputClass = {};
+
+        if(meta.error){
+            helperText=meta.error;
+        } else if (dateStatus == 'expired'){
+            helperText='Expired';
+            helperClass={
+                classes: {
+                  root: this.props.classes.helperRed,
+                }
+            };
+            inputClass={
+                classes: {
+                  root: this.props.classes.inputRed,
+                }
+            };
+        } else if (dateStatus == 'almost-expired'){
+            helperText='Expiring soon';
+            helperClass={
+                classes: {
+                  root: this.props.classes.helperOrange,
+                }
+            };
+            inputClass={
+                classes: {
+                  root: this.props.classes.inputOrange,
+                }
+            };
+        }
 
         return (
-            <div className={className}>
-                <label>{label}</label>
-                <input {...input} type="date" autoComplete="off" placeholder={placeholder} className = {classNameInput} />
-                {this.renderError(meta)}
-            </div>
+            <TextField
+            id="outlined-helperText"
+            label={label}
+            className={className}
+            type="date"
+            fullWidth = {true}
+            margin="dense"
+            helperText={helperText}
+            variant="outlined"
+            autoComplete= "nope"
+            required={required ? true : false}
+            error={meta.error ? true : false}
+            InputLabelProps={{
+                classes: {
+                  root: this.props.classes.label,
+                  shrink: this.props.classes.shrink,
+                }
+            }}
+            FormHelperTextProps={helperClass}
+            InputProps={inputClass}
+            {...input}
+        />
         );
     };
 
     renderInput = ({ input, label, meta, required, className }) => {
         //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
-        console.log('meta.error', meta);
         return (
             <TextField
                 id="outlined-helperText"
@@ -141,11 +227,17 @@ class HomeEditContent extends React.Component {
                 className={className}
                 fullWidth = {true}
                 margin="dense"
-                helperText={meta.error && meta.touched ? meta.error : ''}
+                helperText={meta.error ? meta.error : ''}
                 variant="outlined"
                 autoComplete= "nope"
                 required={required ? true : false}
-                error={meta.error && meta.touched ? true : false}
+                error={meta.error ? true : false}
+                InputLabelProps={{
+                    classes: {
+                      root: this.props.classes.label,
+                      shrink: this.props.classes.shrink,
+                    }
+                }}
                 {...input}
             />
         );
@@ -165,7 +257,6 @@ class HomeEditContent extends React.Component {
         if(selection === '0'){
             return (
                 <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={classes.form}>
-
                     <div className={classes.formSection}>
                         <div className={classes.formSectionHeader}>
                         <hr className={classes.line}></hr>
@@ -175,17 +266,17 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.twoFields}>
-                                <Field name="street_address" component={this.renderInput} label="Street Address" placeholder="Street Address" className={classes.inputTwoFields} />
-                                <Field name="apt_no" component={this.renderInput} label="Apt #" placeholder="Apt #" className={classes.inputTwoFields} />
+                                <Field name="street_address" component={this.renderInput} label="Street Address" className={classes.inputTwoFields} Input />
+                                <Field name="apt_no" component={this.renderInput} label="Apt #" className={classes.inputTwoFields} />
                             </div>   
                             <div className={classes.threeFields}>
-                                <Field name="city" component={this.renderInput} label="City" placeholder="City" className={classes.inputThreeFields} />
-                                <Field name="postal_code" component={this.renderInput} label="Postal Code" placeholder="Postal Code" className={classes.inputThreeFields} />
-                                <Field name="home_phone" component={this.renderInput} label="Home Phone" placeholder="Home Phone" className={classes.inputThreeFields} />
+                                <Field name="city" component={this.renderInput} label="City" className={classes.inputThreeFields} />
+                                <Field name="postal_code" component={this.renderInput} label="Postal Code" className={classes.inputThreeFields} />
+                                <Field name="home_phone" component={this.renderInput} label="Home Phone" className={classes.inputThreeFields} />
                             </div> 
                             <div className={classes.twoFields}>
-                                <Field name="home_opened" component={this.renderInput} label="Date Home Opened" placeholder="Date Home Opened" className={classes.inputTwoFields} />
-                                <Field name="home_name" component={this.renderInput} label="Home Name" placeholder="Home Name" className={classes.inputTwoFields} />
+                                <Field name="home_opened" component={this.renderDatePicker} label="Date Home Opened" className={classes.inputTwoFields} />
+                                <Field name="home_name" component={this.renderInput} label="Home Name" className={classes.inputTwoFields} />
                             </div>   
                         </div>
                     </div>
@@ -198,12 +289,12 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.twoFields}>
-                                <Field name="primary_first_name" component={this.renderInput} label="First Name" placeholder="Primary First Name" required="required" className={classes.inputTwoFields} />
-                                <Field name="primary_last_name" component={this.renderInput} label="Last Name" placeholder="Primary Last Name" required="required" className={classes.inputTwoFields} />
+                                <Field name="primary_first_name" component={this.renderInput} label="First Name" required="required" className={classes.inputTwoFields} />
+                                <Field name="primary_last_name" component={this.renderInput} label="Last Name" required="required" className={classes.inputTwoFields} />
                             </div>   
                             <div className={classes.twoFields}>
-                                <Field name="primary_cell" component={this.renderInput} label="Cell Phone" placeholder="Primary Cell Phone" className={classes.inputTwoFields} />
-                                <Field name="primary_email" component={this.renderInput} label="Email" placeholder="Primary Email" className={classes.inputTwoFields} />
+                                <Field name="primary_cell" component={this.renderInput} label="Cell Phone" className={classes.inputTwoFields} />
+                                <Field name="primary_email" component={this.renderInput} label="Email" className={classes.inputTwoFields} />
                             </div> 
                         </div>
                     </div>
@@ -216,12 +307,12 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.twoFields}>
-                                <Field name="secondary_first_name" component={this.renderInput} label="First Name" placeholder="First Name" className={classes.inputTwoFields} />
-                                <Field name="secondary_last_name" component={this.renderInput} label="Last Name" placeholder="Last Name" className={classes.inputTwoFields} />
+                                <Field name="secondary_first_name" component={this.renderInput} label="First Name" className={classes.inputTwoFields} />
+                                <Field name="secondary_last_name" component={this.renderInput} label="Last Name" className={classes.inputTwoFields} />
                             </div>   
                             <div className={classes.twoFields}>
-                                <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" placeholder="Cell Phone" className={classes.inputTwoFields} />
-                                <Field name="secondary_email" component={this.renderInput} label="Email" placeholder="Email" className={classes.inputTwoFields} />
+                                <Field name="secondary_cell" component={this.renderInput} label="Cell Phone" className={classes.inputTwoFields} />
+                                <Field name="secondary_email" component={this.renderInput} label="Email" className={classes.inputTwoFields} />
                             </div> 
                         </div>
                     </div>          
@@ -232,63 +323,90 @@ class HomeEditContent extends React.Component {
             );
         } else if(selection === '1'){
             return (
-                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className="ui form error">
-                    {/* <h4 className="ui dividing header">General Info</h4> */}
-                    <h4 className="ui horizontal divider section header teal">
-                        Primary
-                    </h4>
-                    <div className="three fields">
-                        <Field name="primary_drivers_license" component={this.renderDatePicker} label="Primary Drivers License" placeholder="Expiry Date" />
-                        <Field name="primary_cpr" component={this.renderDatePicker} label="Primary CPR" placeholder="Expiry Date" />
-                        <Field name="primary_cpi" component={this.renderDatePicker} label="Primary CPI" placeholder="Expiry Date" />
-                    </div>   
-                    <div className="ui hidden divider"></div>
-                    <h4 className="ui horizontal divider section header teal">
-                        Secondary
-                    </h4>
-                    <div className="three fields">
-                        <Field name="secondary_drivers_license" component={this.renderDatePicker} label="Secondary Drivers License" placeholder="Expiry Date" />
-                        <Field name="secondary_cpr" component={this.renderDatePicker} label="Secondary CPR" placeholder="Expiry Date" />
-                        <Field name="secondary_cpi" component={this.renderDatePicker} label="Secondary CPI" placeholder="Expiry Date" />
-                    </div> 
-                    <div className="ui hidden divider"></div>
-                    <h4 className="ui horizontal divider section header teal">
-                        Home
-                    </h4>
-                    <div className="three fields">
-                        <Field name="home_insurance" component={this.renderDatePicker} label="Home Insurance" placeholder="Expiry Date" />
-                        <Field name="auto_insurance_1" component={this.renderDatePicker} label="Auto Insurance 1" placeholder="Expiry Date" />
-                        <Field name="auto_insurance_2" component={this.renderDatePicker} label="Auto Insurance 2" placeholder="Expiry Date" />
-                    </div> 
-                    <div className="ui hidden divider"></div>                
-                    <div className="field"><button className="ui button">Submit Changes</button></div>
+                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={classes.form}>
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Home  
+                            </Typography>
+                        </div>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.threeFields}>
+                                <Field name="home_insurance" component={this.renderDatePicker} label="Home Insurance Expiry" className={classes.inputThreeFields} />
+                                <Field name="auto_insurance_1" component={this.renderDatePicker} label="Auto Insurance 1 Expiry" className={classes.inputThreeFields} />
+                                <Field name="auto_insurance_2" component={this.renderDatePicker} label="Auto Insurance 2 Expiry" className={classes.inputThreeFields} />
+                            </div>   
+                        </div>
+                    </div>
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Primary  
+                            </Typography>
+                        </div>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.threeFields}>
+                                <Field name="primary_drivers_license" component={this.renderDatePicker} label="Drivers License Expiry" className={classes.inputThreeFields} />
+                                <Field name="primary_cpr" component={this.renderDatePicker} label="CPR Expiry" className={classes.inputThreeFields} />
+                                <Field name="primary_cpi" component={this.renderDatePicker} label="CPI Expiry" className={classes.inputThreeFields} />
+                            </div>   
+                        </div>
+                    </div>
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Secondary  
+                            </Typography>
+                        </div>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.threeFields}>
+                                <Field name="secondary_drivers_license" component={this.renderDatePicker} label="Drivers License Expiry" className={classes.inputThreeFields} />
+                                <Field name="secondary_cpr" component={this.renderDatePicker} label="CPR Expiry" className={classes.inputThreeFields} />
+                                <Field name="secondary_cpi" component={this.renderDatePicker} label="CPI Expiry" className={classes.inputThreeFields} />
+                            </div>   
+                        </div>
+                    </div>
+                    <Button variant="contained" type="submit" color="primary" size="medium" className={classes.button}>
+                        Save Changes
+                    </Button> 
                 </form>
             );
         } else if(selection === '2'){
             return (
-                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className="ui form error">
-                    {/* <h4 className="ui dividing header">General Info</h4> */}
-                    <h4 className="ui horizontal divider section header teal">
-                        Annual
-                    </h4>
-                    <div className="three fields">
-                        <Field name="home_study" component={this.renderDatePicker} label="Home Study" placeholder="Expiry Date" />
-                        <Field name="annual_review" component={this.renderDatePicker} label="Annual Review" placeholder="Expiry Date" />
-                        <Field name="fire_safety_plan" component={this.renderDatePicker} label="Fire Safety Plan" placeholder="Expiry Date" />
-                    </div> 
-                    <div className="three fields">
-                        <Field name="home_health_safety_plan" component={this.renderDatePicker} label="Home Health Safety Plan" placeholder="Expiry Date" />
-                        <Field name="service_contract" component={this.renderDatePicker} label="Service Contract" placeholder="Expiry Date" />
-                    </div> 
-                    <div className="ui hidden divider"></div>                
-                    <div className="field"><button className="ui button">Submit Changes</button></div>
+                <form onSubmit = {this.props.handleSubmit(this.onSubmit)} className={classes.form}>
+                    <div className={classes.formSection}>
+                        <div className={classes.formSectionHeader}>
+                        <hr className={classes.line}></hr>
+                            <Typography className={classes.header}>
+                                Annual  
+                            </Typography>
+                        </div>
+                        <div className={classes.formSectionContent}>
+                            <div className={classes.threeFields}>
+                                <Field name="home_study" component={this.renderDatePicker} label="Home Study" className={classes.inputThreeFields} />
+                                <Field name="annual_review" component={this.renderDatePicker} label="Annual Review" className={classes.inputThreeFields} />
+                                <Field name="fire_safety_plan" component={this.renderDatePicker} label="Fire Safety Plan" className={classes.inputThreeFields} />
+                            </div>
+                            <div className={classes.twoFields}>
+                                <Field name="home_health_safety_plan" component={this.renderDatePicker} label="Home Health Safety Plan" className={classes.inputTwoFields} />
+                                <Field name="service_contract" component={this.renderDatePicker} label="Service Contract" className={classes.inputTwoFields} />
+                            </div>      
+                        </div>
+                        
+                    </div>
+                    <Button variant="contained" type="submit" color="primary" size="medium" className={classes.button}>
+                        Save Changes
+                    </Button> 
                 </form>
             );
         }
     };
 
     render() {
-        const { classes, selection, home } = this.props;   
+        const { classes, selection, home } = this.props;  
 
         return (
             <div className = {classes.contentArea}>

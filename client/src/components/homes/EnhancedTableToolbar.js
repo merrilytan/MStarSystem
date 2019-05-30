@@ -11,7 +11,6 @@ import Typography from '@material-ui/core/Typography';
 import printAllHomeDueDates from '../../js/pdfs/printAllHomeDueDates';
 
 const toolbarStyles = theme => ({
-
     actionButtonContainer: {
         display: 'flex',
         color: theme.palette.text.secondary,
