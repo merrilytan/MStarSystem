@@ -12,7 +12,7 @@ import { createHome } from '../../actions';
 const styles = theme => ({
     button: {
         boxShadow: 'none',
-        marginTop: '25px',
+        marginTop: '20px',
         marginBottom: 0,
         '&:hover': {
             color: '#fff',
@@ -24,7 +24,7 @@ const styles = theme => ({
     flexContainer: {
         width: '100%',
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'center',
         flexWrap: 'wrap',
         alignItems: 'center',
@@ -36,6 +36,10 @@ const styles = theme => ({
         fontSize: '18px',
         flexGrow: 1,
         fontWeight: 'bold'
+    },
+    label: {
+        zIndex: '1000',
+        minWidth: '80px',
     },
     inputField: {
         marginBottom: 10,
@@ -49,14 +53,14 @@ const styles = theme => ({
         padding: '30px 40px',
         textAlign: 'center',
     },
-
-    label: {
-        // backgroundColor: '#fff',
-        zIndex: '1000',
-        minWidth: '80px',
-    },
-    shrink: {
-        backgroundColor: '#fff'
+    success: {
+        border: '1px solid #199a28',
+        marginTop: '10px',
+        padding: '8px 10px',
+        borderRadius: '4px',
+        color: '#199a28',
+        fontWeight: 'bold',
+        backgroundColor: '#e5f9e7',
     },
 });
 
@@ -73,15 +77,15 @@ class HomeCreate extends React.Component {
     renderSuccess(){
         if(this.state.success) {
             return (
-                <div class="ui success message">
-                    <div class="header">New Home Created</div>
+                <div className={this.props.classes.success}>
+                    { `${this.state.submittedValues.home_name} home created!`}
+                    {/* <a href={`/homes/edit/${this.state.submittedValues.home_id}`}>{this.state.submittedValues.home_name}</a> */}
                 </div>
             );
         }
     }
 
     renderInput = ({ input, label, meta, className, required }) => {
-        //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         console.log('meta.error', meta);
         return (
             <TextField
@@ -111,6 +115,7 @@ class HomeCreate extends React.Component {
         this.props.createHome(formValues);
         this.props.reset();
         this.state.success = 1;
+        this.state.submittedValues = formValues;
     }
 
     render(){
@@ -179,6 +184,10 @@ const validate = (formValues) => {
     return errors;
 };
 
+const mapStateToProps = (state) => {
+    return { homes: Object.values(state.homes)}; //Object.values turns it into an array so it's easier for us to loop through
+};
+
 HomeCreate.propTypes = {
     classes: PropTypes.object.isRequired,
 };
@@ -190,4 +199,4 @@ const formWrapped = reduxForm({
     validate: validate
 })(HomeCreate);
 
-export default connect(null, { createHome })(withStyles(styles)(formWrapped));
+export default connect(mapStateToProps, { createHome })(withStyles(styles)(formWrapped));

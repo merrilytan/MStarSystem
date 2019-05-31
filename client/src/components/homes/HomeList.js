@@ -21,7 +21,6 @@ const styles = theme => ({
     button: {
         margin: theme.spacing.unit,
         minWidth: '40px',
-        // padding: '0px',
         boxShadow: 'none',
         height: '25px',
         fontSize: '13px',

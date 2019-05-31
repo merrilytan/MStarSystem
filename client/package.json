@@ -21,6 +21,7 @@
     "lodash": "^4.17.11",
     "material-ui": "^0.20.2",
     "moment": "^2.24.0",
+    "notistack": "^0.8.5",
     "object-diff": "0.0.4",
     "react": "^16.7.0",
     "react-async-component": "^2.0.0",

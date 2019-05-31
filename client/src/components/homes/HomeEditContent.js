@@ -3,6 +3,7 @@ import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import diff from 'object-diff';
+import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -56,6 +57,30 @@ const styles = theme => ({
         color: '#2196f3',
         backgroundColor: '#f3f3f4'
     },
+    helperOrange: {
+        color: '#fff',
+        backgroundColor: '#ffc34d',
+        border: '1px solid #ffc34d',
+        margin: '-5px 0px 0px 0px',
+        zIndex: '5',
+        color: '#fff',
+        padding: '3px 15px',
+        borderBottomLeftRadius: '4px',
+        borderBottomRightRadius: '4px',
+        fontSize: '12px',
+    },
+    helperRed: {
+        color: '#fff',
+        backgroundColor: '#e57373',
+        border: '1px solid #e57373',
+        margin: '-5px 0px 0px 0px',
+        zIndex: '5',
+        color: '#fff',
+        padding: '3px 15px',
+        borderBottomLeftRadius: '4px',
+        borderBottomRightRadius: '4px',
+        fontSize: '12px',
+    },
     inputThreeFields: {
         marginBottom: '20px',
         width: '32%',
@@ -64,6 +89,11 @@ const styles = theme => ({
         marginBottom: '20px',
         width: '49%',
     },
+    label: {
+        backgroundColor: '#f3f3f4',
+        zIndex: '1000',
+        minWidth: '75px',
+    },
     line: {
         width: '100%',
         border: '0',
@@ -71,6 +101,10 @@ const styles = theme => ({
         display: 'block',
         padding: '0',
         borderTop: '1px solid #2196f3',
+    },
+    shrink: {
+        backgroundColor: '#f3f3f4',
+        minWidth: '1px',
     },
     threeFields: {
         display: 'flex',
@@ -98,46 +132,6 @@ const styles = theme => ({
             flexWrap: 'wrap',
         },
     },
-
-
-    helperOrange: {
-        color: '#fff',
-        backgroundColor: '#ffc34d',
-        border: '1px solid #ffc34d',
-        margin: '-5px 0px 0px 0px',
-        zIndex: '5',
-        color: '#fff',
-        padding: '3px 15px',
-        borderBottomLeftRadius: '4px',
-        borderBottomRightRadius: '4px',
-        fontSize: '12px',
-    },
-    helperRed: {
-        color: '#fff',
-        backgroundColor: '#e57373',
-        border: '1px solid #e57373',
-        margin: '-5px 0px 0px 0px',
-        zIndex: '5',
-        color: '#fff',
-        padding: '3px 15px',
-        borderBottomLeftRadius: '4px',
-        borderBottomRightRadius: '4px',
-        fontSize: '12px',
-    },
-    label: {
-        backgroundColor: '#f3f3f4',
-        zIndex: '1000',
-        minWidth: '80px',
-    },
-    shrink: {
-        backgroundColor: '#f3f3f4'
-    },
-    inputOrange: {
-        backgroundColor: '#ffeecc',
-    },
-    inputRed: {
-        backgroundColor: '#ffe8e6',
-    },
 });
 
 class HomeEditContent extends React.Component {
@@ -158,7 +152,7 @@ class HomeEditContent extends React.Component {
         if(input.value && label != "Date Home Opened") {
             dateStatus = checkDate(input.value);
         }
-        console.log('dateStatus', dateStatus);
+        console.log('meta', meta);
 
         let helperText = '';
         let helperClass = {};
@@ -173,21 +167,11 @@ class HomeEditContent extends React.Component {
                   root: this.props.classes.helperRed,
                 }
             };
-            inputClass={
-                classes: {
-                  root: this.props.classes.inputRed,
-                }
-            };
         } else if (dateStatus == 'almost-expired'){
             helperText='Expiring soon';
             helperClass={
                 classes: {
                   root: this.props.classes.helperOrange,
-                }
-            };
-            inputClass={
-                classes: {
-                  root: this.props.classes.inputOrange,
                 }
             };
         }
@@ -204,7 +188,7 @@ class HomeEditContent extends React.Component {
             variant="outlined"
             autoComplete= "nope"
             required={required ? true : false}
-            error={meta.error ? true : false}
+            error={meta.error && meta.touched ? true : false}
             InputLabelProps={{
                 classes: {
                   root: this.props.classes.label,
@@ -219,7 +203,6 @@ class HomeEditContent extends React.Component {
     };
 
     renderInput = ({ input, label, meta, required, className }) => {
-        //const className = `field required ${meta.error && meta.touched ? 'error' : ''} ${required ? 'required' : ''}`;
         return (
             <TextField
                 id="outlined-helperText"
@@ -245,10 +228,12 @@ class HomeEditContent extends React.Component {
 
     onSubmit = formValues => {
         const changedValues = diff(this.props.initialValues, formValues);
-        console.log('submit', this.props.home);
         if(!isEmpty(changedValues)){
-            this.props.editHome(this.props.home.home_id, changedValues);
+            this.props.editHome(this.props.home.home_id, changedValues)
+                .then((response) => {this.props.enqueueSnackbar('Successfully saved changes.', { variant: 'success' })})
+                .catch((error) => console.log(error));
         }
+
     };
 
     renderSection = (selection) => {
@@ -333,9 +318,9 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.threeFields}>
-                                <Field name="home_insurance" component={this.renderDatePicker} label="Home Insurance Expiry" className={classes.inputThreeFields} />
-                                <Field name="auto_insurance_1" component={this.renderDatePicker} label="Auto Insurance 1 Expiry" className={classes.inputThreeFields} />
-                                <Field name="auto_insurance_2" component={this.renderDatePicker} label="Auto Insurance 2 Expiry" className={classes.inputThreeFields} />
+                                <Field name="home_insurance" component={this.renderDatePicker} label="Home Insurance" className={classes.inputThreeFields} />
+                                <Field name="auto_insurance_1" component={this.renderDatePicker} label="Auto Insurance 1" className={classes.inputThreeFields} />
+                                <Field name="auto_insurance_2" component={this.renderDatePicker} label="Auto Insurance 2" className={classes.inputThreeFields} />
                             </div>   
                         </div>
                     </div>
@@ -348,9 +333,9 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.threeFields}>
-                                <Field name="primary_drivers_license" component={this.renderDatePicker} label="Drivers License Expiry" className={classes.inputThreeFields} />
-                                <Field name="primary_cpr" component={this.renderDatePicker} label="CPR Expiry" className={classes.inputThreeFields} />
-                                <Field name="primary_cpi" component={this.renderDatePicker} label="CPI Expiry" className={classes.inputThreeFields} />
+                                <Field name="primary_drivers_license" component={this.renderDatePicker} label="Drivers License" className={classes.inputThreeFields} />
+                                <Field name="primary_cpr" component={this.renderDatePicker} label="CPR" className={classes.inputThreeFields} />
+                                <Field name="primary_cpi" component={this.renderDatePicker} label="CPI" className={classes.inputThreeFields} />
                             </div>   
                         </div>
                     </div>
@@ -363,9 +348,9 @@ class HomeEditContent extends React.Component {
                         </div>
                         <div className={classes.formSectionContent}>
                             <div className={classes.threeFields}>
-                                <Field name="secondary_drivers_license" component={this.renderDatePicker} label="Drivers License Expiry" className={classes.inputThreeFields} />
-                                <Field name="secondary_cpr" component={this.renderDatePicker} label="CPR Expiry" className={classes.inputThreeFields} />
-                                <Field name="secondary_cpi" component={this.renderDatePicker} label="CPI Expiry" className={classes.inputThreeFields} />
+                                <Field name="secondary_drivers_license" component={this.renderDatePicker} label="Drivers License" className={classes.inputThreeFields} />
+                                <Field name="secondary_cpr" component={this.renderDatePicker} label="CPR" className={classes.inputThreeFields} />
+                                <Field name="secondary_cpi" component={this.renderDatePicker} label="CPI" className={classes.inputThreeFields} />
                             </div>   
                         </div>
                     </div>
@@ -416,7 +401,7 @@ class HomeEditContent extends React.Component {
     }
 };
 
-const validate = (formValues) => {
+const validate = (formValues, props) => {
     const errors = {};
 
     if(!formValues.primary_first_name) {
@@ -426,6 +411,11 @@ const validate = (formValues) => {
     if(!formValues.primary_last_name) {
         errors.primary_last_name = 'You must enter the primary\'s last name';
     }
+
+    // if(Object.entries(errors).length !== 0){
+    //     console.log('errors', errors);
+    //     props.enqueueSnackbar('Could not save due to errors!');
+    // }
 
     return errors;
 };
@@ -444,24 +434,15 @@ HomeEditContent.propTypes = {
     selection: PropTypes.string.isRequired,
 };
 
-// const mapStateToProps = (state) => {
-//     return { 
-//         initialValues: { 
-//             ...state.home
-//         },
-//         home: state.home
-//     };
-// };
-
 const formWrapped = reduxForm({ 
     form: 'homeEdit', 
-    // enableReinitialize : true,
+    enableReinitialize : true,
     touchOnBlur : false, 
-    validate: validate
+    validate: validate,
+    // shouldValidate: (obj) =>  obj.props.submitting ? true : true,
 })(HomeEditContent);
 
-export default connect(mapStateToProps, { editHome })(withStyles(styles)(formWrapped));
-
+export default connect(mapStateToProps, { editHome })(withStyles(styles)(withSnackbar(formWrapped)));
 
 
 

@@ -38,7 +38,7 @@ const theme = createMuiTheme({
         },
         MuiInputLabel: {
             root: {
-                color: '#aaa',
+                color: '#888',
                 '&$focused': {
                     minWidth: 'auto'
                 },
