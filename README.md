@@ -42,6 +42,6 @@ cd client
 npm run build
 ```
 
-#### To Start server on local environment:
+#### To Start Server on Local Environment:
 
 Install and run [MAMP Server](https://www.mamp.info/en/) for PC or Mac.
