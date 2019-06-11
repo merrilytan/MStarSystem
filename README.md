@@ -7,7 +7,7 @@ m*system is a web application that enables social workers to keep track of docum
 
 This project is currently under development. A sample live site can be seen [here](http://138.197.163.51/).
 
-Features currently in development include (1) a role-based access system, (2) a search filter for homes, (3) function to close homes, (4) a list of closed of homes, and (5) function to add secondary/tertiary applicants as needed.
+Features currently in development include (1) a role-based access system, (2) a search filter for homes, (3) a function to close homes, (4) a list of closed of homes, and (5) a function to add secondary/tertiary applicants as needed.
 
 ## Languages & Tools
 
