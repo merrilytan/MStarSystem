@@ -17,6 +17,7 @@ Features currently in development include (1) a role-based access system, (2) a 
 * JavaScript ES6
 * SCSS
 * HTML
+* [Material-UI](https://material-ui.com/) - React UI framework
 * Webpack - module bundler
 * Babel - transpiler
 
